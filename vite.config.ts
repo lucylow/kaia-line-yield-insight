@@ -9,15 +9,28 @@ export default defineConfig(({ mode }) => ({
     port: 8080,
   },
   plugins: [
-    react(),
+    react({
+      babel: {
+        plugins: []
+      }
+    }),
   ],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
-      "@shared": path.resolve(__dirname, "./packages/shared/src"),
     },
   },
   define: {
     global: 'globalThis',
   },
+  build: {
+    target: 'esnext',
+    minify: false,
+    rollupOptions: {
+      external: []
+    }
+  },
+  optimizeDeps: {
+    include: ['react', 'react-dom']
+  }
 }))
