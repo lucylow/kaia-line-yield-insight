@@ -1,15 +1,20 @@
-export default {
-  plugins: [],
-  server: { 
-    host: "::", 
-    port: 8080 
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react-swc'
+import path from 'path'
+
+export default defineConfig({
+  plugins: [react()],
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
   },
-  resolve: { 
-    alias: { 
-      "@": "/src" 
-    } 
+  build: {
+    outDir: 'dist',
+    sourcemap: false,
   },
-  esbuild: {
-    target: 'esnext'
+  server: {
+    port: 8080,
+    host: "::"
   }
-}
+})

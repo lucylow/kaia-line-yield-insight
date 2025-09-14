@@ -1,48 +1,66 @@
 import React from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
 
 function App() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-8">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold mb-4">Kaia LINE Yield Insight</h1>
-          <p className="text-xl text-muted-foreground mb-8">
+          <h1 className="text-4xl font-bold mb-4 text-gray-900">
+            Kaia LINE Yield Insight
+          </h1>
+          <p className="text-xl text-gray-600 mb-8">
             DeFi yield farming and trading platform on Kaia blockchain
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Dashboard</CardTitle>
-              <CardDescription>View your portfolio and earnings</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button className="w-full">Go to Dashboard</Button>
-            </CardContent>
-          </Card>
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <h3 className="text-xl font-semibold mb-2">Dashboard</h3>
+            <p className="text-gray-600 mb-4">View your portfolio and earnings</p>
+            <button className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors">
+              Go to Dashboard
+            </button>
+          </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Payment Demo</CardTitle>
-              <CardDescription>QR code payment system</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button className="w-full">Try Payment</Button>
-            </CardContent>
-          </Card>
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <h3 className="text-xl font-semibold mb-2">Payment Demo</h3>
+            <p className="text-gray-600 mb-4">QR code payment system</p>
+            <button className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors">
+              Try Payment
+            </button>
+          </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Kaia Payments</CardTitle>
-              <CardDescription>Kaia blockchain payments</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button className="w-full">Kaia Pay</Button>
-            </CardContent>
-          </Card>
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <h3 className="text-xl font-semibold mb-2">Kaia Payments</h3>
+            <p className="text-gray-600 mb-4">Kaia blockchain payments</p>
+            <button className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors">
+              Kaia Pay
+            </button>
+          </div>
+
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <h3 className="text-xl font-semibold mb-2">DeFi Demo</h3>
+            <p className="text-gray-600 mb-4">Yield farming and staking</p>
+            <button className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors">
+              Start Farming
+            </button>
+          </div>
+
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <h3 className="text-xl font-semibold mb-2">Trade & Earn</h3>
+            <p className="text-gray-600 mb-4">Trading with rewards</p>
+            <button className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors">
+              Start Trading
+            </button>
+          </div>
+
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <h3 className="text-xl font-semibold mb-2">Verification</h3>
+            <p className="text-gray-600 mb-4">Token management</p>
+            <button className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors">
+              Manage Tokens
+            </button>
+          </div>
         </div>
       </div>
     </div>
