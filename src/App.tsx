@@ -1,27 +1,35 @@
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
+import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { SimpleWalletProvider } from './providers/SimpleWalletProvider';
+import { LineNextProvider } from './providers/LineNextProvider';
+import { ErrorBoundary } from './components/ErrorBoundary';
+import { LanguageProvider } from './i18n';
+import Landing from './pages/Landing';
+import KaiaPaymentPage from './pages/KaiaPaymentPage';
+import KaiaDefiDashboard from './components/KaiaDefiDashboard';
+import KaiaTradeAndEarn from './components/KaiaTradeAndEarn';
+import PlatformVerificationChecklist from './components/PlatformVerificationChecklist';
 
-const queryClient = new QueryClient();
-
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+function App() {
+  return (
+    <ErrorBoundary>
+      <LanguageProvider>
+        <LineNextProvider>
+          <SimpleWalletProvider>
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<Landing />} />
+                <Route path="/kaia-payments" element={<KaiaPaymentPage />} />
+                <Route path="/kaia-defi" element={<KaiaDefiDashboard />} />
+                <Route path="/trade-earn" element={<KaiaTradeAndEarn />} />
+                <Route path="/verification" element={<PlatformVerificationChecklist />} />
+              </Routes>
+            </BrowserRouter>
+          </SimpleWalletProvider>
+        </LineNextProvider>
+      </LanguageProvider>
+    </ErrorBoundary>
+  );
+}
 
 export default App;
