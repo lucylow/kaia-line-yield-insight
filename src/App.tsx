@@ -1,28 +1,45 @@
-import React from 'react';
+import React from 'react'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { Toaster } from '@/components/ui/toaster'
+
+// Import pages
+import LandingPage from '@/pages/LandingPage'
+import QRPaymentPage from '@/pages/QRPaymentPage'
+import KaiaPaymentPage from '@/pages/KaiaPaymentPage'
+import MiniDappDemo from '@/pages/MiniDappDemo'
+import TradePage from '@/pages/TradePage'
+import TokenManagementPage from '@/pages/TokenManagementPage'
+import DashboardPage from '@/pages/DashboardPage'
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      retry: 1,
+    },
+  },
+})
 
 function App() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="container max-w-md mx-auto p-6 text-center">
-        <h1 className="text-3xl font-bold mb-4 text-foreground">
-          Welcome to LINE Yield
-        </h1>
-        <p className="text-muted-foreground mb-8">
-          Your DeFi yield farming platform
-        </p>
-        <div className="space-y-4">
-          <div className="p-4 bg-card rounded-lg border">
-            <h3 className="font-semibold text-card-foreground">Yield Farming</h3>
-            <p className="text-sm text-muted-foreground">Earn rewards on your crypto</p>
-          </div>
-          <div className="p-4 bg-card rounded-lg border">
-            <h3 className="font-semibold text-card-foreground">Kaia Network</h3>
-            <p className="text-sm text-muted-foreground">Built on Kaia blockchain</p>
-          </div>
+    <QueryClientProvider client={queryClient}>
+      <Router>
+        <div className="min-h-screen bg-background">
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/payment-demo" element={<QRPaymentPage />} />
+            <Route path="/kaia-payments" element={<KaiaPaymentPage />} />
+            <Route path="/kaia-defi" element={<MiniDappDemo />} />
+            <Route path="/trade-earn" element={<TradePage />} />
+            <Route path="/verification" element={<TokenManagementPage />} />
+          </Routes>
+          <Toaster />
         </div>
-      </div>
-    </div>
-  );
+      </Router>
+    </QueryClientProvider>
+  )
 }
 
-export default App;
+export default App
