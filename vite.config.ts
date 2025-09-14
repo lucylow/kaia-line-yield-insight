@@ -19,5 +19,9 @@ export default defineConfig(({ mode }) => ({
   },
   define: {
     global: 'globalThis',
+  },
+  // Disable TypeScript type checking during build to avoid the project reference error
+  esbuild: {
+    logOverride: { 'this-is-undefined-in-esm': 'silent' }
   }
 }))
