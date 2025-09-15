@@ -34,7 +34,7 @@
     "src/components/**/*",
     "src/hooks/**/*",
     "src/pages/**/*",
-    "src/providers/**/*",
+    "src/providers/AppKitProvider.tsx",
     "src/services/**/*",
     "src/sdk/**/*",
     "src/utils/**/*",

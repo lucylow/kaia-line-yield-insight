@@ -1,252 +1,297 @@
 import React, { useState } from 'react';
-import { Transaction } from '../types/vault';
-import { formatCurrency } from '../utils/formatters';
-import { ArrowUpRight, ArrowDownLeft, Clock, CheckCircle, XCircle, ExternalLink, Copy, Filter } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { useToast } from '@/hooks/use-toast';
+import { Card, CardHeader, CardContent, CardTitle } from './ui/Card';
+import { Button } from './ui/Button';
 
-interface TransactionHistoryProps {
-  transactions: Transaction[];
-  isLoading?: boolean;
-  onRefresh?: () => void;
+interface Transaction {
+  id: string;
+  type: 'deposit' | 'withdraw' | 'yield' | 'referral' | 'swap' | 'loan';
+  amount: string;
+  token: string;
+  status: 'completed' | 'pending' | 'failed';
+  timestamp: string;
+  hash: string;
+  description: string;
+  fee?: string;
 }
 
-type FilterType = 'all' | 'deposit' | 'withdraw' | 'claim';
+const mockTransactions: Transaction[] = [
+  {
+    id: '1',
+    type: 'deposit',
+    amount: '1000.00',
+    token: 'USDT',
+    status: 'completed',
+    timestamp: '2024-01-25 14:30:22',
+    hash: '0x1234...5678',
+    description: 'Deposit to USDT Stable Pool',
+    fee: '2.50'
+  },
+  {
+    id: '2',
+    type: 'yield',
+    amount: '25.50',
+    token: 'USDT',
+    status: 'completed',
+    timestamp: '2024-01-24 09:15:33',
+    hash: '0x9876...5432',
+    description: 'Yield earned from USDT Stable Pool'
+  },
+  {
+    id: '3',
+    type: 'referral',
+    amount: '12.75',
+    token: 'USDT',
+    status: 'completed',
+    timestamp: '2024-01-23 16:45:12',
+    hash: '0x4567...8901',
+    description: 'Referral commission from friend deposit'
+  },
+  {
+    id: '4',
+    type: 'withdraw',
+    amount: '500.00',
+    token: 'USDT',
+    status: 'pending',
+    timestamp: '2024-01-22 11:20:45',
+    hash: '0x2345...6789',
+    description: 'Withdrawal from Kaia Liquidity Mining',
+    fee: '5.00'
+  },
+  {
+    id: '5',
+    type: 'swap',
+    amount: '100.00',
+    token: 'KAI',
+    status: 'completed',
+    timestamp: '2024-01-21 08:30:15',
+    hash: '0x3456...7890',
+    description: 'Swap KAI to USDT',
+    fee: '0.50'
+  },
+  {
+    id: '6',
+    type: 'loan',
+    amount: '750.00',
+    token: 'USDT',
+    status: 'completed',
+    timestamp: '2024-01-20 13:15:28',
+    hash: '0x5678...9012',
+    description: 'Loan against NFT collateral',
+    fee: '15.00'
+  }
+];
 
-export const TransactionHistory: React.FC<TransactionHistoryProps> = ({
-  transactions,
-  isLoading = false,
-  onRefresh
-}) => {
-  const [filter, setFilter] = useState<FilterType>('all');
-  const { toast } = useToast();
+export const TransactionHistory: React.FC = () => {
+  const [filter, setFilter] = useState<'all' | 'deposit' | 'withdraw' | 'yield' | 'referral' | 'swap' | 'loan'>('all');
+  const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
 
-  const filteredTransactions = transactions.filter(tx => {
-    if (filter === 'all') return true;
-    return tx.type === filter;
-  });
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'confirmed':
-        return <CheckCircle className="w-4 h-4 text-green-600" />;
-      case 'pending':
-        return <Clock className="w-4 h-4 text-yellow-600" />;
-      case 'failed':
-        return <XCircle className="w-4 h-4 text-red-600" />;
-      default:
-        return <Clock className="w-4 h-4 text-gray-400" />;
+  const getTypeColor = (type: string) => {
+    switch (type) {
+      case 'deposit': return 'text-green-600 bg-green-100';
+      case 'withdraw': return 'text-red-600 bg-red-100';
+      case 'yield': return 'text-blue-600 bg-blue-100';
+      case 'referral': return 'text-purple-600 bg-purple-100';
+      case 'swap': return 'text-yellow-600 bg-yellow-100';
+      case 'loan': return 'text-orange-600 bg-orange-100';
+      default: return 'text-gray-600 bg-gray-100';
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'confirmed':
-        return 'bg-green-100 text-green-800 border-green-200';
-      case 'pending':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'failed':
-        return 'bg-red-100 text-red-800 border-red-200';
-      default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'completed': return 'text-green-600 bg-green-100';
+      case 'pending': return 'text-yellow-600 bg-yellow-100';
+      case 'failed': return 'text-red-600 bg-red-100';
+      default: return 'text-gray-600 bg-gray-100';
     }
-  };
-
-  const getTransactionIcon = (type: string) => {
-    switch (type) {
-      case 'deposit':
-        return <ArrowUpRight className="w-5 h-5 text-green-600" />;
-      case 'withdraw':
-        return <ArrowDownLeft className="w-5 h-5 text-blue-600" />;
-      case 'claim':
-        return <CheckCircle className="w-5 h-5 text-purple-600" />;
-      default:
-        return <ArrowUpRight className="w-5 h-5 text-gray-600" />;
-    }
-  };
-
-  const copyToClipboard = (text: string, label: string) => {
-    navigator.clipboard.writeText(text);
-    toast({
-      title: "Copied to Clipboard",
-      description: `${label} copied successfully`,
-    });
-  };
-
-  const formatDate = (timestamp: number) => {
-    const date = new Date(timestamp);
-    const now = new Date();
-    const diffInHours = (now.getTime() - date.getTime()) / (1000 * 60 * 60);
-
-    if (diffInHours < 1) {
-      return 'Just now';
-    } else if (diffInHours < 24) {
-      return `${Math.floor(diffInHours)}h ago`;
-    } else if (diffInHours < 168) { // 7 days
-      return `${Math.floor(diffInHours / 24)}d ago`;
-    } else {
-      return date.toLocaleDateString();
-    }
-  };
-
-  const getTransactionAmount = (tx: Transaction) => {
-    const amount = parseFloat(tx.amount);
-    const formattedAmount = formatCurrency(amount);
-    return tx.type === 'deposit' ? `+${formattedAmount}` : `-${formattedAmount}`;
   };
 
   const getAmountColor = (type: string) => {
-    return type === 'deposit' ? 'text-green-600' : 'text-blue-600';
+    switch (type) {
+      case 'deposit':
+      case 'yield':
+      case 'referral':
+        return 'text-green-600';
+      case 'withdraw':
+      case 'loan':
+        return 'text-red-600';
+      default:
+        return 'text-gray-600';
+    }
   };
 
-  if (isLoading) {
-    return (
-      <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20">
-        <div className="animate-pulse space-y-4">
-          <div className="h-6 bg-gray-200 rounded w-1/3"></div>
+  const getAmountPrefix = (type: string) => {
+    switch (type) {
+      case 'deposit':
+      case 'yield':
+      case 'referral':
+        return '+';
+      case 'withdraw':
+      case 'loan':
+        return '-';
+      default:
+        return '';
+    }
+  };
+
+  const filteredTransactions = filter === 'all' 
+    ? mockTransactions 
+    : mockTransactions.filter(tx => tx.type === filter);
+
+  const totalVolume = mockTransactions.reduce((sum, tx) => {
+    const amount = parseFloat(tx.amount);
+    return tx.type === 'deposit' || tx.type === 'yield' || tx.type === 'referral' 
+      ? sum + amount 
+      : sum - amount;
+  }, 0);
+
+  return (
+    <div className="space-y-6">
+      <div className="text-center">
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">Transaction History</h2>
+        <p className="text-gray-600">Track all your transactions and earnings</p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card>
+          <CardContent className="p-6 text-center">
+            <p className="text-2xl font-bold text-blue-600">{mockTransactions.length}</p>
+            <p className="text-sm text-gray-600">Total Transactions</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-6 text-center">
+            <p className="text-2xl font-bold text-green-600">${totalVolume.toFixed(2)}</p>
+            <p className="text-sm text-gray-600">Net Volume</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-6 text-center">
+            <p className="text-2xl font-bold text-purple-600">$38.25</p>
+            <p className="text-sm text-gray-600">Total Fees</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <div className="flex justify-between items-center">
+            <CardTitle>Recent Transactions</CardTitle>
+            <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg">
+              {['all', 'deposit', 'withdraw', 'yield', 'referral', 'swap', 'loan'].map((type) => (
+                <button
+                  key={type}
+                  onClick={() => setFilter(type as any)}
+                  className={`px-3 py-1 rounded-md text-xs font-medium transition-colors ${
+                    filter === type
+                      ? 'bg-white text-gray-900 shadow-sm'
+                      : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  {type.charAt(0).toUpperCase() + type.slice(1)}
+                </button>
+              ))}
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
           <div className="space-y-3">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="flex items-center gap-4 p-4 bg-gray-100 rounded-xl">
-                <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
-                <div className="flex-1 space-y-2">
-                  <div className="h-4 bg-gray-200 rounded w-1/4"></div>
-                  <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+            {filteredTransactions.map((transaction) => (
+              <div 
+                key={transaction.id}
+                className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 cursor-pointer"
+                onClick={() => setSelectedTransaction(transaction)}
+              >
+                <div className="flex items-center space-x-4">
+                  <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+                    <span className="text-sm font-medium text-gray-600">
+                      {transaction.type.charAt(0).toUpperCase()}
+                    </span>
+                  </div>
+                  <div>
+                    <p className="font-medium">{transaction.description}</p>
+                    <p className="text-sm text-gray-600">{transaction.timestamp}</p>
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <div className="h-4 bg-gray-200 rounded w-16"></div>
-                  <div className="h-3 bg-gray-200 rounded w-12"></div>
+                <div className="flex items-center space-x-4">
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${getTypeColor(transaction.type)}`}>
+                    {transaction.type.toUpperCase()}
+                  </span>
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(transaction.status)}`}>
+                    {transaction.status.toUpperCase()}
+                  </span>
+                  <span className={`font-medium ${getAmountColor(transaction.type)}`}>
+                    {getAmountPrefix(transaction.type)}${transaction.amount} {transaction.token}
+                  </span>
                 </div>
               </div>
             ))}
           </div>
-        </div>
-      </div>
-    );
-  }
+        </CardContent>
+      </Card>
 
-  return (
-    <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20">
-      <div className="flex items-center justify-between mb-6">
-        <h3 className="text-xl font-semibold text-gray-800">Transaction History</h3>
-        {onRefresh && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onRefresh}
-            className="hover:bg-green-50 hover:border-green-300 transition-all duration-200"
-          >
-            <Filter className="w-4 h-4 mr-2" />
-            Refresh
-          </Button>
-        )}
-      </div>
-
-      {/* Filter Buttons */}
-      <div className="flex gap-2 mb-6">
-        {(['all', 'deposit', 'withdraw', 'claim'] as FilterType[]).map((filterType) => (
-          <Button
-            key={filterType}
-            variant={filter === filterType ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setFilter(filterType)}
-            className={`capitalize ${
-              filter === filterType
-                ? 'bg-green-500 text-white hover:bg-green-600'
-                : 'hover:bg-green-50 hover:border-green-300'
-            } transition-all duration-200`}
-          >
-            {filterType}
-          </Button>
-        ))}
-      </div>
-
-      {/* Transaction List */}
-      <div className="space-y-3">
-        {filteredTransactions.length === 0 ? (
-          <div className="text-center py-8">
-            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Clock className="w-8 h-8 text-gray-400" />
-            </div>
-            <p className="text-gray-500">No transactions found</p>
-            {filter !== 'all' && (
-              <Button
-                variant="outline"
+      {selectedTransaction && (
+        <Card>
+          <CardHeader>
+            <div className="flex justify-between items-center">
+              <CardTitle>Transaction Details</CardTitle>
+              <Button 
+                variant="outline" 
                 size="sm"
-                onClick={() => setFilter('all')}
-                className="mt-2"
+                onClick={() => setSelectedTransaction(null)}
               >
-                View All Transactions
+                Close
               </Button>
-            )}
-          </div>
-        ) : (
-          filteredTransactions.map((tx) => (
-            <div
-              key={tx.hash}
-              className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-all duration-200 group"
-            >
-              {/* Transaction Icon */}
-              <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm">
-                {getTransactionIcon(tx.type)}
-              </div>
-
-              {/* Transaction Details */}
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="font-medium text-gray-800 capitalize">
-                    {tx.type}
-                  </span>
-                  <Badge
-                    variant="outline"
-                    className={`text-xs ${getStatusColor(tx.status)}`}
-                  >
-                    <div className="flex items-center gap-1">
-                      {getStatusIcon(tx.status)}
-                      {tx.status}
-                    </div>
-                  </Badge>
-                </div>
-                <div className="flex items-center gap-2 text-sm text-gray-500">
-                  <span>{formatDate(tx.timestamp)}</span>
-                  <span>•</span>
-                  <button
-                    onClick={() => copyToClipboard(tx.hash, 'Transaction Hash')}
-                    className="hover:text-gray-700 transition-colors flex items-center gap-1"
-                  >
-                    <span className="font-mono">{tx.hash.slice(0, 10)}...{tx.hash.slice(-8)}</span>
-                    <Copy className="w-3 h-3" />
-                  </button>
-                </div>
-              </div>
-
-              {/* Amount */}
-              <div className="text-right">
-                <div className={`font-semibold text-lg ${getAmountColor(tx.type)}`}>
-                  {getTransactionAmount(tx)}
-                </div>
-                <div className="text-sm text-gray-500">USDT</div>
-              </div>
-
-              {/* External Link */}
-              <button
-                onClick={() => window.open(`https://baobab.klaytnscope.com/tx/${tx.hash}`, '_blank')}
-                className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 p-2 hover:bg-white rounded-lg"
-              >
-                <ExternalLink className="w-4 h-4 text-gray-400" />
-              </button>
             </div>
-          ))
-        )}
-      </div>
-
-      {/* Load More Button */}
-      {filteredTransactions.length > 0 && filteredTransactions.length >= 10 && (
-        <div className="mt-6 text-center">
-          <Button variant="outline" className="hover:bg-green-50 hover:border-green-300">
-            Load More Transactions
-          </Button>
-        </div>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-3">
+                <div>
+                  <p className="text-sm text-gray-600">Type</p>
+                  <p className="font-medium">{selectedTransaction.type.toUpperCase()}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600">Amount</p>
+                  <p className="font-medium">{getAmountPrefix(selectedTransaction.type)}${selectedTransaction.amount} {selectedTransaction.token}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600">Status</p>
+                  <p className="font-medium">{selectedTransaction.status.toUpperCase()}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600">Timestamp</p>
+                  <p className="font-medium">{selectedTransaction.timestamp}</p>
+                </div>
+              </div>
+              <div className="space-y-3">
+                <div>
+                  <p className="text-sm text-gray-600">Transaction Hash</p>
+                  <p className="font-mono text-sm">{selectedTransaction.hash}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600">Description</p>
+                  <p className="font-medium">{selectedTransaction.description}</p>
+                </div>
+                {selectedTransaction.fee && (
+                  <div>
+                    <p className="text-sm text-gray-600">Fee</p>
+                    <p className="font-medium">${selectedTransaction.fee}</p>
+                  </div>
+                )}
+                <div className="pt-4">
+                  <Button 
+                    variant="outline" 
+                    className="w-full"
+                    onClick={() => window.open(`https://explorer.kaia.one/tx/${selectedTransaction.hash}`, '_blank')}
+                  >
+                    View on Explorer
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       )}
     </div>
   );
