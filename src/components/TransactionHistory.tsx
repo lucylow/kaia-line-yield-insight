@@ -83,7 +83,7 @@ const mockTransactions: Transaction[] = [
   }
 ];
 
-export const TransactionHistory: React.FC = () => {
+const TransactionHistory: React.FC = () => {
   const [filter, setFilter] = useState<'all' | 'deposit' | 'withdraw' | 'yield' | 'referral' | 'swap' | 'loan'>('all');
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
 
@@ -298,3 +298,5 @@ export const TransactionHistory: React.FC = () => {
     </div>
   );
 };
+
+export default TransactionHistory;

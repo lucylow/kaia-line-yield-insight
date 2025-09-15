@@ -6,7 +6,7 @@ import { Dashboard } from './components/Dashboard';
 import { YieldStrategies } from './components/YieldStrategies';
 import { NFTMarketplace } from './components/NFTMarketplace';
 import { ReferralSystem } from './components/ReferralSystem';
-import { TransactionHistory } from './components/TransactionHistory';
+import TransactionHistory from './components/TransactionHistory';
 import { ErrorBoundary } from './components/ErrorBoundary';
 
 // @lovable:main-app-component
