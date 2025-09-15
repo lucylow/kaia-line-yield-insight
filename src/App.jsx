@@ -1,4 +1,5 @@
 import React from 'react'
+import { WalletConnectButton } from './components/WalletConnectButton'
 
 function App() {
   return (
@@ -11,6 +12,9 @@ function App() {
           <p className="text-xl text-gray-600 mb-8">
             DeFi yield farming and trading platform on Kaia blockchain
           </p>
+          <div className="mb-8">
+            <WalletConnectButton size="lg" className="px-8 py-3" />
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
