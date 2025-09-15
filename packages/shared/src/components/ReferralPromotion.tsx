@@ -16,6 +16,7 @@ export const ReferralPromotion: React.FC<ReferralPromotionProps> = ({ userAddres
   const copyToClipboard = async () => {
     try {
       await navigator.clipboard.writeText(referralLink);
+      setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
       console.error('Failed to copy: ', err);
