@@ -1,5 +1,5 @@
 import React from 'react'
-import { WalletConnectButton } from './components/WalletConnectButton'
+import SimpleWalletButton from './components/SimpleWalletButton'
 
 function App() {
   return (
@@ -13,7 +13,7 @@ function App() {
             DeFi yield farming and trading platform on Kaia blockchain
           </p>
           <div className="mb-8">
-            <WalletConnectButton size="lg" className="px-8 py-3" />
+            <SimpleWalletButton size="lg" className="px-8 py-3" />
           </div>
         </div>
 
