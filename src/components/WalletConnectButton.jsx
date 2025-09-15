@@ -1,9 +1,8 @@
 import React from 'react';
 import { Button } from './ui/Button';
 import { Wallet, Copy, ExternalLink, LogOut } from 'lucide-react';
-import { useWallet } from '../hooks/useWallet';
+import { useWallet } from '../providers/SimpleWalletProvider';
 import { truncateAddress } from '../utils/formatters';
-import { useToast } from '../hooks/use-toast';
 
 const WalletConnectButton = ({ 
   variant = 'default', 
@@ -13,15 +12,10 @@ const WalletConnectButton = ({
   showDisconnect = true 
 }) => {
   const { address, isConnected, connect, disconnect, balanceFormatted, symbol } = useWallet();
-  const { toast } = useToast();
-
   const copyAddress = () => {
     if (address) {
       navigator.clipboard.writeText(address);
-      toast({
-        title: "Address Copied",
-        description: "Wallet address copied to clipboard",
-      });
+      alert("Address copied to clipboard");
     }
   };
 

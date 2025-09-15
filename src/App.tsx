@@ -9,7 +9,7 @@ import { ReferralSystem } from './components/ReferralSystem';
 import { TransactionHistory } from './components/TransactionHistory';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { NetworkBanner } from './components/NetworkBanner';
-import { WalletConnectButton } from './components/WalletConnectButton';
+import WalletConnectButton from './components/WalletConnectButton.jsx';
 import WalletConnectDemo from './pages/WalletConnectDemo';
 import { cn } from './utils/cn';
 

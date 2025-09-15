@@ -1,23 +1,22 @@
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { WalletConnectButton } from './WalletConnectButton';
-import { useWalletConnectModal } from '@/hooks/useWalletConnectModal';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from './ui/Card';
+import WalletConnectButton from './WalletConnectButton.jsx';
+import { useWallet } from '../providers/SimpleWalletProvider';
 import { Wallet, Copy, ExternalLink } from 'lucide-react';
-import { truncateAddress } from '@/utils/formatters';
+import { truncateAddress } from '../utils/formatters';
 
 export const WalletIntegrationExample: React.FC = () => {
-  const { walletConnection } = useWalletConnectModal();
+  const { address, isConnected, symbol } = useWallet();
 
   const copyAddress = () => {
-    if (walletConnection?.address) {
-      navigator.clipboard.writeText(walletConnection.address);
+    if (address) {
+      navigator.clipboard.writeText(address);
     }
   };
 
   const openExplorer = () => {
-    if (walletConnection?.address) {
-      const explorerUrl = `https://scope.kaia.one/account/${walletConnection.address}`;
+    if (address) {
+      const explorerUrl = `https://scope.kaia.one/account/${address}`;
       window.open(explorerUrl, '_blank');
     }
   };
@@ -40,27 +39,27 @@ export const WalletIntegrationExample: React.FC = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          {walletConnection?.isConnected ? (
+          {isConnected ? (
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium text-gray-700">Connection Status</span>
-                <Badge variant="default" className="bg-green-100 text-green-800">
+                <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">
                   Connected
-                </Badge>
+                </span>
               </div>
               
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium text-gray-700">Wallet Type</span>
-                <Badge variant="outline">
-                  {walletConnection.walletType}
-                </Badge>
+                <span className="px-2 py-1 border border-gray-300 rounded-full text-xs font-medium">
+                  Kaia Wallet
+                </span>
               </div>
               
               <div className="space-y-2">
                 <span className="text-sm font-medium text-gray-700">Address</span>
                 <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
                   <span className="font-mono text-sm">
-                    {truncateAddress(walletConnection.address, 8, 6)}
+                    {truncateAddress(address, 8, 6)}
                   </span>
                   <button
                     onClick={copyAddress}

@@ -1,7 +1,7 @@
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { WalletConnectButton } from '@/components/WalletConnectButton';
-import { WalletIntegrationExample } from '@/components/WalletIntegrationExample';
+import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
+import WalletConnectButton from '../components/WalletConnectButton.jsx';
+import { WalletIntegrationExample } from '../components/WalletIntegrationExample';
 import { Wallet, Shield, Zap, Users } from 'lucide-react';
 
 const WalletConnectDemo: React.FC = () => {
