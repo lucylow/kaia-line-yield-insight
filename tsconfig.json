@@ -41,6 +41,5 @@
     "src/App.tsx",
     "src/App-original.tsx",
     "src/App-simple.tsx"
-  ],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  ]
 }
