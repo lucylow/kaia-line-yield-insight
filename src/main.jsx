@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import App from './App-no-imports'
+import App from './App-minimal-working'
+import './index.css'
 
 // @lovable:main-entry-point
 ReactDOM.createRoot(document.getElementById('root')).render(
