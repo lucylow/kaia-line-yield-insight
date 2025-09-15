@@ -1,5 +1,5 @@
 import React from 'react';
-import { useWallet } from '../providers/WalletProvider';
+import { useWallet } from '../providers/SimpleWalletProvider';
 import { useYieldData } from '../hooks/useYieldData';
 import { Card, CardHeader, CardContent, CardTitle } from './ui/Card';
 import { Button } from './ui/Button';
@@ -7,10 +7,10 @@ import { Button } from './ui/Button';
 // @lovable:dashboard-component
 
 export const Dashboard: React.FC = () => {
-  const { wallet } = useWallet();
+  const { isConnected } = useWallet();
   const { data, isLoading } = useYieldData();
 
-  if (!wallet?.isConnected) {
+  if (!isConnected) {
     return (
       <div className="text-center py-12">
         <h3 className="text-lg font-semibold text-gray-900 mb-2">
