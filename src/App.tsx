@@ -10,6 +10,7 @@ import { ReferralSystem } from './components/ReferralSystem';
 import { TransactionHistory } from './components/TransactionHistory';
 import { AnalyticsDashboard } from './components/AnalyticsDashboard';
 import { RealTimeDashboard } from './components/RealTimeDashboard';
+import { MobileNavigation, DesktopSidebar } from './components/MobileNavigation';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { NetworkBanner } from './components/NetworkBanner';
 import WalletConnectButton from './components/WalletConnectButton.jsx';
@@ -143,106 +144,79 @@ function AppContent({}: AppContentProps) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      {/* Header */}
-      <header className="bg-white/95 backdrop-blur-md shadow-lg border-b border-white/20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            {/* Logo */}
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-gradient-to-br from-emerald-400 to-emerald-500 rounded-xl flex items-center justify-center shadow-lg">
-                <span className="text-white font-bold text-lg">LY</span>
-              </div>
-              <h1 className="text-xl font-bold bg-gradient-to-r from-green-800 to-green-600 bg-clip-text text-transparent">LINE Yield</h1>
-            </div>
-
-            {/* Desktop Navigation */}
-            <nav className="hidden lg:flex space-x-1">
-              {navigationItems.map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => setActiveTab(item.id as typeof activeTab)}
-                  className={cn(
-                    'flex items-center space-x-2 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-300',
-                    activeTab === item.id
-                      ? 'bg-gradient-to-r from-emerald-100 to-green-100 text-emerald-700 shadow-lg'
-                      : 'text-gray-600 hover:text-emerald-600 hover:bg-emerald-50 hover:shadow-md'
-                  )}
-                >
-                  <span>{item.icon}</span>
-                  <span>{item.label}</span>
-                </button>
-              ))}
-            </nav>
-
-            {/* Wallet Connect */}
-            <div className="flex items-center space-x-4">
-              {isConnected ? (
-                <div className="flex items-center space-x-4">
-                  <span className="text-sm text-gray-600">
-                    {address?.slice(0, 6)}...{address?.slice(-4)}
-                  </span>
-                  <span className="text-sm text-gray-600">
-                    Balance: {balanceFormatted} {symbol}
-                  </span>
-                  <Button 
-                    variant="outline" 
-                    onClick={() => {
-                      disconnect();
-                      showSuccess('Wallet Disconnected', 'Your wallet has been successfully disconnected.');
-                    }}
-                    className="border-emerald-200 text-emerald-600 hover:bg-emerald-50 hover:border-emerald-300"
-                  >
-                    Disconnect
-                  </Button>
-                </div>
-              ) : (
-                <Button 
-                  onClick={() => {
-                    connect();
-                    showSuccess('Wallet Connected', 'Your wallet has been successfully connected to Kaia network.');
-                  }}
-                  className="bg-gradient-to-r from-emerald-400 to-emerald-500 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
-                >
-                  Connect Wallet
-                </Button>
-              )}
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Network Banner */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
-        <NetworkBanner />
-      </div>
-
       {/* Mobile Navigation */}
-      <div className="lg:hidden bg-white/95 backdrop-blur-md border-b border-white/20">
-        <div className="px-4 py-2">
-          <div className="flex space-x-1 overflow-x-auto">
-            {navigationItems.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => setActiveTab(item.id as typeof activeTab)}
-                className={cn(
-                  'flex items-center space-x-2 px-3 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all duration-300',
-                  activeTab === item.id
-                    ? 'bg-gradient-to-r from-emerald-100 to-green-100 text-emerald-700 shadow-lg'
-                    : 'text-gray-600 hover:text-emerald-600 hover:bg-emerald-50 hover:shadow-md'
-                )}
-              >
-                <span>{item.icon}</span>
-                <span>{item.label}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
+      <MobileNavigation 
+        activeTab={activeTab} 
+        onTabChange={(tab) => setActiveTab(tab as typeof activeTab)} 
+      />
+
+      {/* Desktop Sidebar */}
+      <DesktopSidebar 
+        activeTab={activeTab} 
+        onTabChange={(tab) => setActiveTab(tab as typeof activeTab)} 
+      />
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {renderContent()}
-      </main>
+      <div className="lg:pl-64">
+        {/* Desktop Header */}
+        <header className="hidden lg:block bg-white/95 backdrop-blur-md shadow-lg border-b border-white/20">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center h-16">
+              {/* Logo */}
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 bg-gradient-to-br from-emerald-400 to-emerald-500 rounded-xl flex items-center justify-center shadow-lg">
+                  <span className="text-white font-bold text-lg">LY</span>
+                </div>
+                <h1 className="text-xl font-bold bg-gradient-to-r from-green-800 to-green-600 bg-clip-text text-transparent">LINE Yield</h1>
+              </div>
+
+              {/* Wallet Connect */}
+              <div className="flex items-center space-x-4">
+                {isConnected ? (
+                  <div className="flex items-center space-x-4">
+                    <span className="text-sm text-gray-600">
+                      {address?.slice(0, 6)}...{address?.slice(-4)}
+                    </span>
+                    <span className="text-sm text-gray-600">
+                      Balance: {balanceFormatted} {symbol}
+                    </span>
+                    <Button 
+                      variant="outline" 
+                      onClick={() => {
+                        disconnect();
+                        showSuccess('Wallet Disconnected', 'Your wallet has been successfully disconnected.');
+                      }}
+                      className="border-emerald-200 text-emerald-600 hover:bg-emerald-50 hover:border-emerald-300"
+                    >
+                      Disconnect
+                    </Button>
+                  </div>
+                ) : (
+                  <Button 
+                    onClick={() => {
+                      connect();
+                      showSuccess('Wallet Connected', 'Your wallet has been successfully connected to Kaia network.');
+                    }}
+                    className="bg-gradient-to-r from-emerald-400 to-emerald-500 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
+                  >
+                    Connect Wallet
+                  </Button>
+                )}
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* Network Banner */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 lg:pt-4">
+          <NetworkBanner />
+        </div>
+
+        {/* Main Content */}
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-20 lg:pb-8">
+          {renderContent()}
+        </main>
+      </div>
 
       {/* Footer */}
       <footer className="bg-white/95 backdrop-blur-md border-t border-white/20 mt-16">

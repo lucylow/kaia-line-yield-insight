@@ -1,0 +1,117 @@
+version: '3.8'
+
+services:
+  # Frontend and Backend Application
+  line-yield-app:
+    build:
+      context: .
+      dockerfile: Dockerfile.production
+    ports:
+      - "3000:3000"  # Frontend
+      - "3001:3001"  # Backend API
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      - FRONTEND_PORT=3000
+    env_file:
+      - .env.production
+      - backend/.env.production
+    depends_on:
+      - postgres
+      - redis
+    restart: unless-stopped
+    networks:
+      - line-yield-network
+
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: line_yield_production
+      POSTGRES_USER: ${POSTGRES_USER:-lineyield}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database-schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+      - ./database-schema-credit.sql:/docker-entrypoint-initdb.d/02-credit.sql
+      - ./database-schema-kaia-payments.sql:/docker-entrypoint-initdb.d/03-kaia-payments.sql
+      - ./database-schema-loans.sql:/docker-entrypoint-initdb.d/04-loans.sql
+      - ./database-schema-payments.sql:/docker-entrypoint-initdb.d/05-payments.sql
+      - ./database-schema-qr-payments.sql:/docker-entrypoint-initdb.d/06-qr-payments.sql
+      - ./database-schema-referral.sql:/docker-entrypoint-initdb.d/07-referral.sql
+      - ./database-schema-rewards.sql:/docker-entrypoint-initdb.d/08-rewards.sql
+      - ./database-schema-tokenomics.sql:/docker-entrypoint-initdb.d/09-tokenomics.sql
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    networks:
+      - line-yield-network
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-defaultpassword}
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    networks:
+      - line-yield-network
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./ssl:/etc/nginx/ssl
+    depends_on:
+      - line-yield-app
+    restart: unless-stopped
+    networks:
+      - line-yield-network
+
+  # Monitoring with Prometheus
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    restart: unless-stopped
+    networks:
+      - line-yield-network
+
+  # Grafana Dashboard
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-admin}
+    volumes:
+      - grafana_data:/var/lib/grafana
+    restart: unless-stopped
+    networks:
+      - line-yield-network
+
+volumes:
+  postgres_data:
+  redis_data:
+  prometheus_data:
+  grafana_data:
+
+networks:
+  line-yield-network:
+    driver: bridge

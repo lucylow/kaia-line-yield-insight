@@ -18,7 +18,11 @@
     "build:lovable": "tsc && vite build --mode production",
     "preview": "vite preview",
     "install:all": "pnpm install && pnpm --filter @line-yield/shared install && pnpm --filter @line-yield/web-app install",
-    "clean": "pnpm --filter @line-yield/shared clean && pnpm --filter @line-yield/web-app clean"
+    "clean": "pnpm --filter @line-yield/shared clean && pnpm --filter @line-yield/web-app clean",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:ci": "jest --ci --coverage --watchAll=false"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.12",
@@ -58,12 +62,22 @@
     "wagmi": "^1.4.0"
   },
   "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^6.1.0",
+    "@testing-library/jest-dom": "^6.8.0",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/jest": "^30.0.0",
     "@types/react": "^18.3.24",
     "@types/react-dom": "^18.3.7",
     "@vitejs/plugin-react": "^4.7.0",
     "autoprefixer": "^10.4.21",
+    "hardhat": "^3.0.6",
+    "jest": "^30.1.3",
+    "jest-environment-jsdom": "^30.1.2",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.17",
+    "ts-jest": "^29.4.2",
+    "ts-node": "^10.9.2",
     "typescript": "^5.9.2",
     "vite": "^5.4.20"
   }
