@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { SimpleWalletProvider, useWallet } from './providers/SimpleWalletProvider';
+import { NotificationProvider, useNotificationContext } from './providers/NotificationProvider';
 import { Button } from './components/ui/Button';
 import { Card, CardHeader, CardContent, CardTitle } from './components/ui/Card';
 import { Dashboard } from './components/Dashboard';
@@ -7,11 +8,13 @@ import { YieldStrategies } from './components/YieldStrategies';
 import { NFTMarketplace } from './components/NFTMarketplace';
 import { ReferralSystem } from './components/ReferralSystem';
 import { TransactionHistory } from './components/TransactionHistory';
+import { AnalyticsDashboard } from './components/AnalyticsDashboard';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { NetworkBanner } from './components/NetworkBanner';
 import WalletConnectButton from './components/WalletConnectButton.jsx';
 import WalletConnectDemo from './pages/WalletConnectDemo';
 import { cn } from './utils/cn';
+import { performanceService } from './services/performanceService';
 
 // @lovable:main-app-component
 
@@ -19,11 +22,13 @@ interface AppContentProps {}
 
 function AppContent({}: AppContentProps) {
   const { address, isConnected, connect, disconnect, balanceFormatted, symbol } = useWallet();
-  const [activeTab, setActiveTab] = useState<'home' | 'dashboard' | 'strategies' | 'nft' | 'referral' | 'transactions' | 'payments' | 'trading' | 'wallet-demo'>('home');
+  const { showSuccess, showError } = useNotificationContext();
+  const [activeTab, setActiveTab] = useState<'home' | 'dashboard' | 'strategies' | 'nft' | 'referral' | 'transactions' | 'payments' | 'trading' | 'analytics' | 'wallet-demo'>('home');
 
   const navigationItems = [
     { id: 'home', label: 'Home', icon: '🏠' },
     { id: 'dashboard', label: 'Dashboard', icon: '📊' },
+    { id: 'analytics', label: 'Analytics', icon: '📈' },
     { id: 'strategies', label: 'Yield Strategies', icon: '🌱' },
     { id: 'nft', label: 'NFT Marketplace', icon: '🎨' },
     { id: 'referral', label: 'Referral', icon: '🎯' },
@@ -174,6 +179,27 @@ function AppContent({}: AppContentProps) {
               <Card className="hover:shadow-lg transition-shadow">
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center">
+                    <span className="mr-2">📈</span>
+                    Real-Time Analytics
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-600 mb-4">
+                    Live market data, platform metrics, and performance analytics
+                  </p>
+                  <Button 
+                    onClick={() => setActiveTab('analytics')}
+                    className="w-full"
+                    variant="outline"
+                  >
+                    View Analytics
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card className="hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center">
                     <span className="mr-2">🔗</span>
                     Wallet Connection
                   </CardTitle>
@@ -224,6 +250,8 @@ function AppContent({}: AppContentProps) {
         );
       case 'dashboard':
         return <Dashboard />;
+      case 'analytics':
+        return <AnalyticsDashboard />;
       case 'strategies':
         return <YieldStrategies />;
       case 'nft':
@@ -340,12 +368,23 @@ function AppContent({}: AppContentProps) {
                   <span className="text-sm text-gray-600">
                     Balance: {balanceFormatted} {symbol}
                   </span>
-                  <Button variant="outline" onClick={disconnect}>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => {
+                      disconnect();
+                      showSuccess('Wallet Disconnected', 'Your wallet has been successfully disconnected.');
+                    }}
+                  >
                     Disconnect
                   </Button>
                 </div>
               ) : (
-                <Button onClick={connect}>
+                <Button 
+                  onClick={() => {
+                    connect();
+                    showSuccess('Wallet Connected', 'Your wallet has been successfully connected to Kaia network.');
+                  }}
+                >
                   Connect Wallet
                 </Button>
               )}
@@ -447,11 +486,18 @@ function AppContent({}: AppContentProps) {
 }
 
 function App() {
+  // Initialize performance optimizations
+  React.useEffect(() => {
+    performanceService.init();
+  }, []);
+
   return (
     <ErrorBoundary>
-      <SimpleWalletProvider>
-        <AppContent />
-      </SimpleWalletProvider>
+      <NotificationProvider>
+        <SimpleWalletProvider>
+          <AppContent />
+        </SimpleWalletProvider>
+      </NotificationProvider>
     </ErrorBoundary>
   );
 }

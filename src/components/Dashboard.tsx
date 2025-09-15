@@ -3,6 +3,9 @@ import { useWallet } from '../providers/SimpleWalletProvider';
 import { useYieldData } from '../hooks/useYieldData';
 import { Card, CardHeader, CardContent, CardTitle } from './ui/Card';
 import { Button } from './ui/Button';
+import { AnimatedCounter } from './AnimatedCounter';
+import { ProgressRing } from './ProgressRing';
+import { LoadingSpinner } from './LoadingSpinner';
 
 // @lovable:dashboard-component
 
@@ -26,8 +29,8 @@ export const Dashboard: React.FC = () => {
   if (isLoading) {
     return (
       <div className="text-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-        <p className="text-gray-600 mt-4">Loading dashboard...</p>
+        <LoadingSpinner size="lg" className="mx-auto mb-4" />
+        <p className="text-gray-600">Loading dashboard...</p>
       </div>
     );
   }
@@ -42,7 +45,9 @@ export const Dashboard: React.FC = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">${data.totalDeposited}</div>
+            <div className="text-2xl font-bold">
+              $<AnimatedCounter value={parseFloat(data.totalDeposited)} />
+            </div>
           </CardContent>
         </Card>
 
@@ -53,7 +58,9 @@ export const Dashboard: React.FC = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">${data.totalEarned}</div>
+            <div className="text-2xl font-bold text-green-600">
+              $<AnimatedCounter value={parseFloat(data.totalEarned)} />
+            </div>
           </CardContent>
         </Card>
 
@@ -64,7 +71,9 @@ export const Dashboard: React.FC = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-600">{data.currentAPY}%</div>
+            <div className="text-2xl font-bold text-blue-600">
+              <AnimatedCounter value={parseFloat(data.currentAPY)} suffix="%" />
+            </div>
           </CardContent>
         </Card>
 
@@ -75,7 +84,9 @@ export const Dashboard: React.FC = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{data.activeStrategies}</div>
+            <div className="text-2xl font-bold">
+              <AnimatedCounter value={data.activeStrategies} />
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -83,18 +94,32 @@ export const Dashboard: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
+            <CardTitle>Portfolio Performance</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3">
-            <Button className="w-full">
-              Deposit USDT
-            </Button>
-            <Button className="w-full" variant="outline">
-              Withdraw Funds
-            </Button>
-            <Button className="w-full" variant="outline">
-              View Strategies
-            </Button>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-center">
+              <ProgressRing 
+                progress={85} 
+                size={120} 
+                color="#10b981"
+                className="mb-4"
+              />
+            </div>
+            <div className="text-center">
+              <p className="text-sm text-gray-600 mb-2">Portfolio Health</p>
+              <p className="text-lg font-semibold text-green-600">Excellent</p>
+            </div>
+            <div className="space-y-2">
+              <Button className="w-full">
+                Deposit USDT
+              </Button>
+              <Button className="w-full" variant="outline">
+                Withdraw Funds
+              </Button>
+              <Button className="w-full" variant="outline">
+                View Strategies
+              </Button>
+            </div>
           </CardContent>
         </Card>
 

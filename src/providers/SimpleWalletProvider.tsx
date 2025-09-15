@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState } from 'react';
+import { useNotificationContext } from './NotificationProvider';
 
 interface WalletInfo {
   address: string | undefined;
@@ -37,6 +38,9 @@ export function SimpleWalletProvider({ children }: SimpleWalletProviderProps) {
     symbol: undefined,
     isKaiaNetwork: false,
   });
+
+  // Note: We'll handle notifications in the component that uses this provider
+  // to avoid circular dependency issues
 
   const connect = () => {
     setWalletInfo(prev => ({ ...prev, isConnecting: true }));
