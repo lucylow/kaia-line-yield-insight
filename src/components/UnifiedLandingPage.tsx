@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight, LineChart, ArrowUp, PlayCircle, Menu, X, Home, TrendingUp, Users, Award, ShoppingBag, History, CreditCard, BarChart, Wallet, User, Settings, HelpCircle } from 'lucide-react';
 import { ConnectWallet } from './ConnectWallet';
-import { useWallet } from '../hooks/useWallet';
+import { useWallet } from '../providers/SimpleWalletProvider';
 
 export const UnifiedLandingPage: React.FC = () => {
   const navigate = useNavigate();
