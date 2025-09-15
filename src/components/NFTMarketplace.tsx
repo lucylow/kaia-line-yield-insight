@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Card, CardHeader, CardContent, CardTitle } from './ui/Card';
 import { Button } from './ui/Button';
 
+// @lovable:nft-marketplace-component
+
 interface NFT {
   id: string;
   name: string;

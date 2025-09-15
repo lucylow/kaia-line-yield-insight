@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Card, CardHeader, CardContent, CardTitle } from './ui/Card';
 import { Button } from './ui/Button';
 
+// @lovable:transaction-history-component
+
 interface Transaction {
   id: string;
   type: 'deposit' | 'withdraw' | 'yield' | 'referral' | 'swap' | 'loan';

@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
+// @lovable:wallet-provider
+
 interface WalletContextType {
   wallet: {
     address: string | null;

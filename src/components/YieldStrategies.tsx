@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Card, CardHeader, CardContent, CardTitle } from './ui/Card';
 import { Button } from './ui/Button';
 
+// @lovable:yield-strategies-component
+
 interface Strategy {
   id: string;
   name: string;

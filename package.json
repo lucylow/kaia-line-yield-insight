@@ -16,6 +16,7 @@
     "build:liff": "pnpm --filter @line-yield/liff-app build",
     "build:web": "pnpm --filter @line-yield/web-app build",
     "build:shared": "pnpm --filter @line-yield/shared build",
+    "build:lovable": "tsc && vite build --mode production",
     "preview": "vite preview",
     "install:all": "pnpm install && pnpm --filter @line-yield/shared install && pnpm --filter @line-yield/liff-app install && pnpm --filter @line-yield/web-app install"
   },

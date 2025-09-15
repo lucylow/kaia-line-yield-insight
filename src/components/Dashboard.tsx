@@ -4,6 +4,8 @@ import { useYieldData } from '../hooks/useYieldData';
 import { Card, CardHeader, CardContent, CardTitle } from './ui/Card';
 import { Button } from './ui/Button';
 
+// @lovable:dashboard-component
+
 export const Dashboard: React.FC = () => {
   const { wallet } = useWallet();
   const { data, isLoading } = useYieldData();

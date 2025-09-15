@@ -1,5 +1,7 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 
+// @lovable:error-boundary-component
+
 interface Props {
   children: ReactNode;
 }

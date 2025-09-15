@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Card, CardHeader, CardContent, CardTitle } from './ui/Card';
 import { Button } from './ui/Button';
 
+// @lovable:referral-system-component
+
 interface ReferralData {
   referralCode: string;
   totalReferrals: number;

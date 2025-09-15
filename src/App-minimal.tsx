@@ -9,6 +9,8 @@ import { ReferralSystem } from './components/ReferralSystem';
 import { TransactionHistory } from './components/TransactionHistory';
 import { ErrorBoundary } from './components/ErrorBoundary';
 
+// @lovable:main-app-component
+
 function AppContent() {
   const { wallet, connectWallet, disconnectWallet } = useWallet();
   const [activeTab, setActiveTab] = useState<'home' | 'dashboard' | 'strategies' | 'nft' | 'referral' | 'transactions'>('home');

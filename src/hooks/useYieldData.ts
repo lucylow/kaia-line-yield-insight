@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 
+// @lovable:yield-data-hook
+
 interface YieldData {
   totalDeposited: string;
   totalEarned: string;
