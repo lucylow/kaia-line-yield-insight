@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JavaScript Test</title>
+</head>
+<body>
+    <div id="root">Loading...</div>
+    
+    <script>
+        console.log('JavaScript is working!');
+        
+        setTimeout(() => {
+            const root = document.getElementById('root');
+            if (root) {
+                root.innerHTML = `
+                    <div style="padding: 20px; font-family: Arial, sans-serif;">
+                        <h1>JavaScript Test - Working!</h1>
+                        <p>This proves JavaScript is executing correctly.</p>
+                        <button onclick="alert('Button clicked!')">Test Button</button>
+                        <div style="margin-top: 20px; padding: 10px; background: #f0f0f0;">
+                            <p>Current time: ${new Date().toLocaleTimeString()}</p>
+                        </div>
+                    </div>
+                `;
+            }
+        }, 100);
+    </script>
+</body>
+</html>
