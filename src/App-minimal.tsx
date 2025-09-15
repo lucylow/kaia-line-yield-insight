@@ -7,6 +7,7 @@ import { YieldStrategies } from './components/YieldStrategies';
 import { NFTMarketplace } from './components/NFTMarketplace';
 import { ReferralSystem } from './components/ReferralSystem';
 import { TransactionHistory } from './components/TransactionHistory';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 function AppContent() {
   const { wallet, connectWallet, disconnectWallet } = useWallet();
@@ -56,7 +57,7 @@ function AppContent() {
             ].map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
+                onClick={() => setActiveTab(tab.id as typeof activeTab)}
                 className={`py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap ${
                   activeTab === tab.id
                     ? 'border-blue-500 text-blue-600'
@@ -156,9 +157,11 @@ function AppContent() {
 
 function App() {
   return (
-    <WalletProvider>
-      <AppContent />
-    </WalletProvider>
+    <ErrorBoundary>
+      <WalletProvider>
+        <AppContent />
+      </WalletProvider>
+    </ErrorBoundary>
   );
 }
 

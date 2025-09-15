@@ -8,7 +8,7 @@ export const Dashboard: React.FC = () => {
   const { wallet } = useWallet();
   const { data, isLoading } = useYieldData();
 
-  if (!wallet.isConnected) {
+  if (!wallet?.isConnected) {
     return (
       <div className="text-center py-12">
         <h3 className="text-lg font-semibold text-gray-900 mb-2">

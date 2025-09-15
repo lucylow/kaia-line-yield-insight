@@ -42,6 +42,12 @@ export const WalletProvider: React.FC<WalletProviderProps> = ({ children }) => {
       });
     } catch (error) {
       console.error('Failed to connect wallet:', error);
+      // Reset wallet state on error
+      setWallet({
+        address: null,
+        isConnected: false,
+        balance: '0'
+      });
     }
   };
 

@@ -178,10 +178,10 @@ export const TransactionHistory: React.FC = () => {
           <div className="flex justify-between items-center">
             <CardTitle>Recent Transactions</CardTitle>
             <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg">
-              {['all', 'deposit', 'withdraw', 'yield', 'referral', 'swap', 'loan'].map((type) => (
+              {(['all', 'deposit', 'withdraw', 'yield', 'referral', 'swap', 'loan'] as const).map((type) => (
                 <button
                   key={type}
-                  onClick={() => setFilter(type as any)}
+                  onClick={() => setFilter(type)}
                   className={`px-3 py-1 rounded-md text-xs font-medium transition-colors ${
                     filter === type
                       ? 'bg-white text-gray-900 shadow-sm'

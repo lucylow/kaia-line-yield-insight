@@ -19,16 +19,22 @@ export const useYieldData = () => {
   useEffect(() => {
     // Simulate API call
     const fetchData = async () => {
-      setIsLoading(true);
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      setData({
-        totalDeposited: '5000.00',
-        totalEarned: '125.50',
-        currentAPY: '8.5',
-        activeStrategies: 3
-      });
-      setIsLoading(false);
+      try {
+        setIsLoading(true);
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        setData({
+          totalDeposited: '5000.00',
+          totalEarned: '125.50',
+          currentAPY: '8.5',
+          activeStrategies: 3
+        });
+      } catch (error) {
+        console.error('Failed to fetch yield data:', error);
+        // Keep default values on error
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     fetchData();
