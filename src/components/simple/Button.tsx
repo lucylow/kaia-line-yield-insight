@@ -2,8 +2,8 @@ import React from 'react';
 import { cn } from '../../lib/utils';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'default' | 'outline' | 'secondary';
-  size?: 'sm' | 'md' | 'lg';
+  variant?: 'default' | 'outline' | 'secondary' | 'ghost' | 'destructive';
+  size?: 'sm' | 'md' | 'lg' | 'icon' | 'default';
   children: React.ReactNode;
 }
 
@@ -19,13 +19,17 @@ export function Button({
   const variantClasses = {
     default: 'bg-blue-600 text-white hover:bg-blue-700',
     outline: 'border border-gray-300 bg-white text-gray-900 hover:bg-gray-50',
-    secondary: 'bg-gray-100 text-gray-900 hover:bg-gray-200'
+    secondary: 'bg-gray-100 text-gray-900 hover:bg-gray-200',
+    ghost: 'text-gray-700 hover:bg-gray-100',
+    destructive: 'bg-red-600 text-white hover:bg-red-700'
   };
   
   const sizeClasses = {
+    default: 'h-10 px-4 py-2',
     sm: 'h-8 px-3 text-sm',
     md: 'h-10 px-4 py-2',
-    lg: 'h-12 px-6 text-lg'
+    lg: 'h-12 px-6 text-lg',
+    icon: 'h-10 w-10'
   };
 
   return (

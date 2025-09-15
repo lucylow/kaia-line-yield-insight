@@ -1,2 +1,2 @@
-// Re-export everything from Button.tsx for compatibility
-export * from './Button';
+// Re-export everything from simple/Button.tsx for compatibility
+export * from '../simple/Button';
