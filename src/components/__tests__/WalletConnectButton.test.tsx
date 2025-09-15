@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { WalletConnectButton } from '../WalletConnectButton';
+import WalletConnectButton from '../WalletConnectButton';
 import { SimpleWalletProvider } from '../../providers/SimpleWalletProvider';
 
 // Mock the wallet provider
@@ -32,7 +32,7 @@ describe('WalletConnectButton', () => {
     fireEvent.click(connectButton);
 
     await waitFor(() => {
-      expect(screen.getByText(/Wallet Connected/)).toBeInTheDocument();
+      expect(screen.getByText(/0x1234\.\.\.7890/)).toBeInTheDocument();
     });
   });
 
