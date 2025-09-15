@@ -8,7 +8,8 @@ import {
   ArrowDownRight,
   Zap,
   Shield,
-  Target
+  Target,
+  Clock
 } from 'lucide-react';
 import { kaiaService, KAIA_DEFI_CONFIG, TRADE_AND_EARN_CONFIG } from '../services/kaiaService';
 import { useTranslation } from '../i18n';
@@ -18,6 +19,10 @@ interface DefiStats {
   totalVolume24h: string;
   activeUsers: string;
   apy: string;
+  networkHealth: string;
+  blockHeight: string;
+  avgBlockTime: string;
+  transactionCount: string;
   kaiaBalance: string;
   usdtBalance: string;
   yieldVaultBalance: string;
@@ -38,10 +43,21 @@ export const KaiaDefiDashboard: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isConnected, setIsConnected] = useState(false);
   const [walletAddress, setWalletAddress] = useState<string>('');
+  const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
+  const [autoRefresh, setAutoRefresh] = useState(true);
 
   useEffect(() => {
     loadDashboardData();
-  }, []);
+    
+    // Set up auto-refresh every 30 seconds
+    const interval = setInterval(() => {
+      if (autoRefresh) {
+        loadDashboardData();
+      }
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, [autoRefresh]);
 
   const loadDashboardData = async () => {
     try {
@@ -72,11 +88,17 @@ export const KaiaDefiDashboard: React.FC = () => {
         totalVolume24h: defiStats.totalVolume24h,
         activeUsers: defiStats.activeUsers,
         apy: defiStats.apy,
+        networkHealth: defiStats.networkHealth,
+        blockHeight: defiStats.blockHeight,
+        avgBlockTime: defiStats.avgBlockTime,
+        transactionCount: defiStats.transactionCount,
         kaiaBalance,
         usdtBalance,
         yieldVaultBalance,
         pendingRewards,
       });
+      
+      setLastUpdate(new Date());
 
       // Load trading pairs
       setTradingPairs([
@@ -146,11 +168,45 @@ export const KaiaDefiDashboard: React.FC = () => {
     <div className="max-w-6xl mx-auto p-6 space-y-6">
       {/* Header */}
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          Kaia DeFi Dashboard
-        </h1>
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center space-x-4">
+            <h1 className="text-3xl font-bold text-gray-900">
+              Kaia DeFi Dashboard
+            </h1>
+            <div className="flex items-center space-x-2">
+              <div className={`w-3 h-3 rounded-full ${
+                stats?.networkHealth === 'Excellent' ? 'bg-green-500' : 
+                stats?.networkHealth === 'Good' ? 'bg-yellow-500' : 'bg-red-500'
+              }`}></div>
+              <span className="text-sm text-gray-600">{stats?.networkHealth || 'Unknown'}</span>
+            </div>
+          </div>
+          <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                id="autoRefresh"
+                checked={autoRefresh}
+                onChange={(e) => setAutoRefresh(e.target.checked)}
+                className="rounded"
+              />
+              <label htmlFor="autoRefresh" className="text-sm text-gray-600">
+                Auto-refresh
+              </label>
+            </div>
+            <button
+              onClick={() => loadDashboardData()}
+              className="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-colors"
+            >
+              Refresh
+            </button>
+          </div>
+        </div>
         <p className="text-gray-600">
           Trade and earn with Kaia-native USDT and stablecoin DeFi protocols
+        </p>
+        <p className="text-sm text-gray-500 mt-2">
+          Last updated: {lastUpdate.toLocaleTimeString()}
         </p>
       </div>
 
@@ -240,6 +296,57 @@ export const KaiaDefiDashboard: React.FC = () => {
               </p>
             </div>
             <TrendingUp className="w-8 h-8 text-orange-600" />
+          </div>
+        </div>
+      </div>
+
+      {/* Network Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Block Height</p>
+              <p className="text-xl font-bold text-gray-900">
+                {stats?.blockHeight || '0'}
+              </p>
+            </div>
+            <Target className="w-6 h-6 text-gray-600" />
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Avg Block Time</p>
+              <p className="text-xl font-bold text-gray-900">
+                {stats?.avgBlockTime || '0s'}
+              </p>
+            </div>
+            <Clock className="w-6 h-6 text-blue-600" />
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Recent Transactions</p>
+              <p className="text-xl font-bold text-gray-900">
+                {stats?.transactionCount || '0'}
+              </p>
+            </div>
+            <Activity className="w-6 h-6 text-purple-600" />
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Network Health</p>
+              <p className="text-xl font-bold text-gray-900">
+                {stats?.networkHealth || 'Unknown'}
+              </p>
+            </div>
+            <Shield className="w-6 h-6 text-green-600" />
           </div>
         </div>
       </div>

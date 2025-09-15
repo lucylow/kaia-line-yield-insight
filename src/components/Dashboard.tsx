@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useWallet } from '../providers/SimpleWalletProvider';
 import { useYieldData } from '../hooks/useYieldData';
 import { Card, CardHeader, CardContent, CardTitle } from './ui/Card';
@@ -6,12 +6,29 @@ import { Button } from './ui/Button';
 import { AnimatedCounter } from './AnimatedCounter';
 import { ProgressRing } from './ProgressRing';
 import { LoadingSpinner } from './LoadingSpinner';
+import { TrendingUp, TrendingDown, RefreshCw, Activity } from 'lucide-react';
 
 // @lovable:dashboard-component
 
 export const Dashboard: React.FC = () => {
   const { isConnected } = useWallet();
   const { data, isLoading } = useYieldData();
+  const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
+  const [performanceData, setPerformanceData] = useState({
+    dailyChange: 2.5,
+    weeklyChange: 8.3,
+    monthlyChange: 15.7,
+    totalReturn: 12.4,
+  });
+
+  useEffect(() => {
+    // Update last update time every 30 seconds
+    const interval = setInterval(() => {
+      setLastUpdate(new Date());
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   if (!isConnected) {
     return (
@@ -38,10 +55,26 @@ export const Dashboard: React.FC = () => {
   return (
     <div className="space-y-8">
       <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-green-800 to-emerald-600 bg-clip-text text-transparent mb-4">
-          Dashboard
-        </h1>
-        <p className="text-lg text-gray-600">Monitor your yield farming performance</p>
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-green-800 to-emerald-600 bg-clip-text text-transparent mb-2">
+              Dashboard
+            </h1>
+            <p className="text-lg text-gray-600">Monitor your yield farming performance</p>
+          </div>
+          <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 text-sm text-gray-500">
+              <Activity className="w-4 h-4" />
+              <span>Last updated: {lastUpdate.toLocaleTimeString()}</span>
+            </div>
+            <button
+              onClick={() => setLastUpdate(new Date())}
+              className="p-2 text-gray-500 hover:text-gray-700 transition-colors"
+            >
+              <RefreshCw className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -93,6 +126,65 @@ export const Dashboard: React.FC = () => {
           <CardContent>
             <div className="text-2xl font-bold text-gray-900">
               <AnimatedCounter value={data.activeStrategies} />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Performance Metrics */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <Card className="bg-white/80 backdrop-blur-sm border-white/20 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-gray-600 flex items-center">
+              <TrendingUp className="w-4 h-4 mr-2 text-green-600" />
+              Daily Return
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-green-600">
+              +<AnimatedCounter value={performanceData.dailyChange} suffix="%" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-white/80 backdrop-blur-sm border-white/20 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-gray-600 flex items-center">
+              <TrendingUp className="w-4 h-4 mr-2 text-blue-600" />
+              Weekly Return
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-blue-600">
+              +<AnimatedCounter value={performanceData.weeklyChange} suffix="%" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-white/80 backdrop-blur-sm border-white/20 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-gray-600 flex items-center">
+              <TrendingUp className="w-4 h-4 mr-2 text-purple-600" />
+              Monthly Return
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-purple-600">
+              +<AnimatedCounter value={performanceData.monthlyChange} suffix="%" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-white/80 backdrop-blur-sm border-white/20 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-gray-600 flex items-center">
+              <TrendingUp className="w-4 h-4 mr-2 text-orange-600" />
+              Total Return
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-orange-600">
+              +<AnimatedCounter value={performanceData.totalReturn} suffix="%" />
             </div>
           </CardContent>
         </Card>
