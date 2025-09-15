@@ -10,6 +10,7 @@ import { TransactionHistory } from './components/TransactionHistory';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { NetworkBanner } from './components/NetworkBanner';
 import { WalletConnectButton } from './components/WalletConnectButton';
+import WalletConnectDemo from './pages/WalletConnectDemo';
 import { cn } from './utils/cn';
 
 // @lovable:main-app-component
@@ -18,7 +19,7 @@ interface AppContentProps {}
 
 function AppContent({}: AppContentProps) {
   const { address, isConnected, connect, disconnect, balanceFormatted, symbol } = useWallet();
-  const [activeTab, setActiveTab] = useState<'home' | 'dashboard' | 'strategies' | 'nft' | 'referral' | 'transactions' | 'payments' | 'trading'>('home');
+  const [activeTab, setActiveTab] = useState<'home' | 'dashboard' | 'strategies' | 'nft' | 'referral' | 'transactions' | 'payments' | 'trading' | 'wallet-demo'>('home');
 
   const navigationItems = [
     { id: 'home', label: 'Home', icon: '🏠' },
@@ -28,7 +29,8 @@ function AppContent({}: AppContentProps) {
     { id: 'referral', label: 'Referral', icon: '🎯' },
     { id: 'transactions', label: 'History', icon: '📋' },
     { id: 'payments', label: 'Payments', icon: '💳' },
-    { id: 'trading', label: 'Trading', icon: '📈' }
+    { id: 'trading', label: 'Trading', icon: '📈' },
+    { id: 'wallet-demo', label: 'Wallet Demo', icon: '🔗' }
   ];
 
   const renderContent = () => {
@@ -168,6 +170,27 @@ function AppContent({}: AppContentProps) {
                   </Button>
                 </CardContent>
               </Card>
+
+              <Card className="hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center">
+                    <span className="mr-2">🔗</span>
+                    Wallet Connection
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-600 mb-4">
+                    Connect with multiple wallet types including social logins and crypto wallets
+                  </p>
+                  <Button 
+                    onClick={() => setActiveTab('wallet-demo')}
+                    className="w-full"
+                    variant="outline"
+                  >
+                    Try Wallet Demo
+                  </Button>
+                </CardContent>
+              </Card>
             </div>
 
             {/* Quick Stats */}
@@ -267,6 +290,8 @@ function AppContent({}: AppContentProps) {
             </div>
           </div>
         );
+      case 'wallet-demo':
+        return <WalletConnectDemo />;
       default:
         return <Dashboard />;
     }

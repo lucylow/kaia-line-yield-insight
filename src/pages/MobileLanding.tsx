@@ -1,4 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { ArrowRight, Zap, Bot, Shield, TrendingUp, LineChart, ArrowUp, ArrowDown, PlayCircle, FileText, Menu, X, Star, Users, Clock, DollarSign } from 'lucide-react';
+import { Button } from '../components/simple/Button';
+import { useWallet } from '../hooks/useWallet';
+import Chatbot from '../components/Chatbot';
+import { ConnectWallet } from '@shared/components';
 
 const MobileLanding: React.FC = () => {
   return (
