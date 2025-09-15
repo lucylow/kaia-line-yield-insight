@@ -5,7 +5,7 @@ import { useWallet } from '../providers/SimpleWalletProvider';
 import { truncateAddress } from '../utils/formatters';
 
 interface WalletConnectButtonProps {
-  variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
+  variant?: 'default' | 'destructive' | 'outline' | 'ghost';
   size?: 'default' | 'sm' | 'lg' | 'icon';
   className?: string;
   showAddress?: boolean;
@@ -41,7 +41,7 @@ const WalletConnectButton: React.FC<WalletConnectButtonProps> = ({
           <div className="flex items-center gap-2 px-3 py-2 bg-gray-100 rounded-lg">
             <Wallet className="w-4 h-4 text-gray-600" />
             <span className="text-sm font-medium text-gray-900">
-              {truncateAddress(address, 6, 4)}
+              {address ? truncateAddress(address, 6, 4) : 'Unknown'}
             </span>
             <Button
               variant="ghost"

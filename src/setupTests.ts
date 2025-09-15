@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 
 // Mock WebSocket for tests
-global.WebSocket = class WebSocket {
+(global as any).WebSocket = class WebSocket {
   constructor(url: string) {
     this.url = url;
     this.readyState = WebSocket.CONNECTING;
@@ -49,7 +49,7 @@ Object.defineProperty(window, 'matchMedia', {
 });
 
 // Mock IntersectionObserver
-global.IntersectionObserver = class IntersectionObserver {
+(global as any).IntersectionObserver = class IntersectionObserver {
   constructor() {}
   disconnect() {}
   observe() {}
@@ -57,7 +57,7 @@ global.IntersectionObserver = class IntersectionObserver {
 };
 
 // Mock ResizeObserver
-global.ResizeObserver = class ResizeObserver {
+(global as any).ResizeObserver = class ResizeObserver {
   constructor() {}
   disconnect() {}
   observe() {}
