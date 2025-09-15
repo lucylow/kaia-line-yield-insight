@@ -11,7 +11,7 @@ interface ReferralLeaderboardEntry {
   total_earnings: number;
 }
 
-export const ReferralPage: React.FC = () => {
+const ReferralPage: React.FC = () => {
   const [userAddress, setUserAddress] = useState<string | null>(null);
   const [leaderboard, setLeaderboard] = useState<ReferralLeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
@@ -273,3 +273,5 @@ export const ReferralPage: React.FC = () => {
     </div>
   );
 };
+
+export default ReferralPage;

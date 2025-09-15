@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/Button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 const DashboardPage = () => {
   return (
@@ -17,7 +17,7 @@ const DashboardPage = () => {
         <Card>
           <CardHeader>
             <CardTitle>Portfolio Value</CardTitle>
-            <CardDescription>Total assets under management</CardDescription>
+            <p className="text-sm text-muted-foreground">Total assets under management</p>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">$12,345.67</p>
@@ -28,7 +28,7 @@ const DashboardPage = () => {
         <Card>
           <CardHeader>
             <CardTitle>Active Positions</CardTitle>
-            <CardDescription>Current yield farming positions</CardDescription>
+            <p className="text-sm text-muted-foreground">Current yield farming positions</p>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">3</p>
@@ -39,7 +39,7 @@ const DashboardPage = () => {
         <Card>
           <CardHeader>
             <CardTitle>Total Earned</CardTitle>
-            <CardDescription>Rewards earned this month</CardDescription>
+            <p className="text-sm text-muted-foreground">Rewards earned this month</p>
           </CardHeader>
           <CardContent>
             <p className="text-2xl font-bold">$456.78</p>

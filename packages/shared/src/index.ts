@@ -4,6 +4,7 @@ export { Card, CardHeader, CardContent, CardTitle, CardDescription, CardFooter }
 export { ConnectWallet } from './components/ConnectWallet';
 export { BalanceDisplay } from './components/BalanceDisplay';
 export { TransactionHistory } from './components/TransactionHistory';
+export { ReferralPromotion } from './components/ReferralPromotion';
 
 // Hooks
 export { usePlatform } from './hooks/usePlatform';
