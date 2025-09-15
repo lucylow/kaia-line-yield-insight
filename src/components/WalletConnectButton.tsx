@@ -4,7 +4,15 @@ import { Wallet, Copy, ExternalLink, LogOut } from 'lucide-react';
 import { useWallet } from '../providers/SimpleWalletProvider';
 import { truncateAddress } from '../utils/formatters';
 
-const WalletConnectButton = ({ 
+interface WalletConnectButtonProps {
+  variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
+  size?: 'default' | 'sm' | 'lg' | 'icon';
+  className?: string;
+  showAddress?: boolean;
+  showDisconnect?: boolean;
+}
+
+const WalletConnectButton: React.FC<WalletConnectButtonProps> = ({ 
   variant = 'default', 
   size = 'default', 
   className = '', 
