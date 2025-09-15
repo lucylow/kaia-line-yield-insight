@@ -6,7 +6,6 @@ interface LandingProps {
 }
 
 const Landing: React.FC<LandingProps> = ({ onNavigate }) => {
-  console.log('Landing component rendering...');
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -19,13 +18,10 @@ const Landing: React.FC<LandingProps> = ({ onNavigate }) => {
   }, []);
 
   const handleGetStarted = () => {
-    console.log('Get started clicked');
     if (onNavigate) {
       onNavigate('dashboard');
     }
   };
-
-  console.log('Landing component about to render JSX...');
   return (
     <div className="min-h-screen bg-white overflow-x-hidden">
       {/* Header */}
