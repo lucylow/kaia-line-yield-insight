@@ -36,67 +36,74 @@ export const Dashboard: React.FC = () => {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
+    <div className="space-y-8">
+      <div className="text-center mb-8">
+        <h1 className="text-4xl font-bold bg-gradient-to-r from-green-800 to-emerald-600 bg-clip-text text-transparent mb-4">
+          Dashboard
+        </h1>
+        <p className="text-lg text-gray-600">Monitor your yield farming performance</p>
+      </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <Card className="bg-white/80 backdrop-blur-sm border-white/20 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-gray-600">
               Total Deposited
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-2xl font-bold text-gray-900">
               $<AnimatedCounter value={parseFloat(data.totalDeposited)} />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-white/80 backdrop-blur-sm border-white/20 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-gray-600">
               Total Earned
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">
+            <div className="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent">
               $<AnimatedCounter value={parseFloat(data.totalEarned)} />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-white/80 backdrop-blur-sm border-white/20 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-gray-600">
               Current APY
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-600">
+            <div className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               <AnimatedCounter value={parseFloat(data.currentAPY)} suffix="%" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-white/80 backdrop-blur-sm border-white/20 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-gray-600">
               Active Strategies
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-2xl font-bold text-gray-900">
               <AnimatedCounter value={data.activeStrategies} />
             </div>
           </CardContent>
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <Card className="bg-white/80 backdrop-blur-sm border-white/20 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2">
           <CardHeader>
-            <CardTitle>Portfolio Performance</CardTitle>
+            <CardTitle className="text-xl font-bold">Portfolio Performance</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-6">
             <div className="flex items-center justify-center">
               <ProgressRing 
                 progress={85} 
@@ -107,39 +114,39 @@ export const Dashboard: React.FC = () => {
             </div>
             <div className="text-center">
               <p className="text-sm text-gray-600 mb-2">Portfolio Health</p>
-              <p className="text-lg font-semibold text-green-600">Excellent</p>
+              <p className="text-lg font-semibold bg-gradient-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent">Excellent</p>
             </div>
-            <div className="space-y-2">
-              <Button className="w-full">
+            <div className="space-y-3">
+              <Button className="w-full bg-gradient-to-r from-emerald-400 to-emerald-500 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
                 Deposit USDT
               </Button>
-              <Button className="w-full" variant="outline">
+              <Button className="w-full border-emerald-200 text-emerald-600 hover:bg-emerald-50 hover:border-emerald-300" variant="outline">
                 Withdraw Funds
               </Button>
-              <Button className="w-full" variant="outline">
+              <Button className="w-full border-emerald-200 text-emerald-600 hover:bg-emerald-50 hover:border-emerald-300" variant="outline">
                 View Strategies
               </Button>
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-white/80 backdrop-blur-sm border-white/20 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2">
           <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
+            <CardTitle className="text-xl font-bold">Recent Activity</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
-              <div className="flex justify-between items-center py-2 border-b">
-                <span className="text-sm">Deposit</span>
-                <span className="text-sm font-medium">+$1,000</span>
+            <div className="space-y-4">
+              <div className="flex justify-between items-center py-3 border-b border-gray-100">
+                <span className="text-sm font-medium text-gray-700">Deposit</span>
+                <span className="text-sm font-bold text-emerald-600">+$1,000</span>
               </div>
-              <div className="flex justify-between items-center py-2 border-b">
-                <span className="text-sm">Yield Earned</span>
-                <span className="text-sm font-medium text-green-600">+$25.50</span>
+              <div className="flex justify-between items-center py-3 border-b border-gray-100">
+                <span className="text-sm font-medium text-gray-700">Yield Earned</span>
+                <span className="text-sm font-bold bg-gradient-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent">+$25.50</span>
               </div>
-              <div className="flex justify-between items-center py-2">
-                <span className="text-sm">Strategy Started</span>
-                <span className="text-sm font-medium">Compound</span>
+              <div className="flex justify-between items-center py-3">
+                <span className="text-sm font-medium text-gray-700">Strategy Started</span>
+                <span className="text-sm font-bold text-gray-900">Compound</span>
               </div>
             </div>
           </CardContent>

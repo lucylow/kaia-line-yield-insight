@@ -7,6 +7,7 @@ import compression from 'compression';
 // import rateLimit from 'express-rate-limit'; // Commented out - package not installed
 import { RateLimiterMemory } from 'rate-limiter-flexible';
 import { localizationMiddleware } from '../middleware/localization-middleware';
+import { WebSocketService } from './websocket-service';
 
 // Import route modules
 import rewardsRoutes from '../routes/rewards';
@@ -20,11 +21,14 @@ import qrPaymentRoutes from '../routes/qr-payment';
 import paymentRoutes from '../routes/payments';
 import kaiaPaymentRoutes from '../routes/kaia-payments';
 import marketplaceRoutes from '../routes/marketplace';
+import userRoutes from '../routes/users';
 
 export class ApiServer {
   private app: express.Application;
+  private server: any;
   private isRunning: boolean = false;
   private rateLimiter: RateLimiterMemory;
+  private wsService: WebSocketService | null = null;
 
   constructor() {
     this.app = express();
@@ -137,6 +141,7 @@ export class ApiServer {
     this.app.use('/api/payments', paymentRoutes);
     this.app.use('/api/kaia-payments', kaiaPaymentRoutes);
     this.app.use('/api/marketplace', marketplaceRoutes);
+    this.app.use('/api/users', userRoutes);
 
     // API documentation endpoint
     this.app.get('/api', (req, res) => {
@@ -158,6 +163,7 @@ export class ApiServer {
             secure: '/api/secure',
             qrPayment: '/api/qr-payment',
             marketplace: '/api/marketplace',
+            users: '/api/users',
           },
           documentation: 'https://docs.line-yield.com/api',
           support: 'https://support.line-yield.com',
@@ -247,16 +253,21 @@ export class ApiServer {
       return;
     }
 
-    const port = CONFIG.server?.port || 3001;
-    const host = CONFIG.server?.host || '0.0.0.0';
+    const port = CONFIG.port;
+    const host = '0.0.0.0';
 
     return new Promise((resolve, reject) => {
       try {
-        this.app.listen(port, host, () => {
+        this.server = this.app.listen(port, host, () => {
           this.isRunning = true;
+          
+          // Initialize WebSocket service
+          this.wsService = new WebSocketService(this.server);
+          
           Logger.info(`API server started on http://${host}:${port}`);
           Logger.info(`Health check: http://${host}:${port}/health`);
           Logger.info(`API documentation: http://${host}:${port}/api`);
+          Logger.info(`WebSocket service available at ws://${host}:${port}/ws`);
           resolve();
         });
       } catch (error) {
@@ -272,6 +283,16 @@ export class ApiServer {
       return;
     }
 
+    // Shutdown WebSocket service
+    if (this.wsService) {
+      this.wsService.shutdown();
+    }
+
+    // Close HTTP server
+    if (this.server) {
+      this.server.close();
+    }
+
     this.isRunning = false;
     Logger.info('API server stopped');
   }
@@ -282,5 +303,9 @@ export class ApiServer {
 
   public isServerRunning(): boolean {
     return this.isRunning;
+  }
+
+  public getWebSocketService(): WebSocketService | null {
+    return this.wsService;
   }
 }

@@ -9,6 +9,7 @@ import { NFTMarketplace } from './components/NFTMarketplace';
 import { ReferralSystem } from './components/ReferralSystem';
 import { TransactionHistory } from './components/TransactionHistory';
 import { AnalyticsDashboard } from './components/AnalyticsDashboard';
+import { RealTimeDashboard } from './components/RealTimeDashboard';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { NetworkBanner } from './components/NetworkBanner';
 import WalletConnectButton from './components/WalletConnectButton.jsx';
@@ -24,12 +25,13 @@ interface AppContentProps {}
 function AppContent({}: AppContentProps) {
   const { address, isConnected, connect, disconnect, balanceFormatted, symbol } = useWallet();
   const { showSuccess, showError } = useNotificationContext();
-  const [activeTab, setActiveTab] = useState<'home' | 'dashboard' | 'strategies' | 'nft' | 'referral' | 'transactions' | 'payments' | 'trading' | 'analytics' | 'wallet-demo'>('home');
+  const [activeTab, setActiveTab] = useState<'home' | 'dashboard' | 'strategies' | 'nft' | 'referral' | 'transactions' | 'payments' | 'trading' | 'analytics' | 'realtime' | 'wallet-demo'>('home');
 
   const navigationItems = [
     { id: 'home', label: 'Home', icon: '🏠' },
     { id: 'dashboard', label: 'Dashboard', icon: '📊' },
     { id: 'analytics', label: 'Analytics', icon: '📈' },
+    { id: 'realtime', label: 'Real-time', icon: '⚡' },
     { id: 'strategies', label: 'Yield Strategies', icon: '🌱' },
     { id: 'nft', label: 'NFT Marketplace', icon: '🎨' },
     { id: 'referral', label: 'Referral', icon: '🎯' },
@@ -47,6 +49,8 @@ function AppContent({}: AppContentProps) {
         return <Dashboard />;
       case 'analytics':
         return <AnalyticsDashboard />;
+      case 'realtime':
+        return <RealTimeDashboard />;
       case 'strategies':
         return <YieldStrategies />;
       case 'nft':
@@ -57,28 +61,34 @@ function AppContent({}: AppContentProps) {
         return <TransactionHistory />;
       case 'payments':
         return (
-          <div className="space-y-6">
+          <div className="space-y-8">
             <div className="text-center">
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Payment System</h2>
-              <p className="text-gray-600">QR code payments and blockchain transactions</p>
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-green-800 to-emerald-600 bg-clip-text text-transparent mb-4">
+                Payment System
+              </h1>
+              <p className="text-lg text-gray-600">QR code payments and blockchain transactions</p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Card>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <Card className="bg-white/80 backdrop-blur-sm border-white/20 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-3">
                 <CardHeader>
-                  <CardTitle>QR Code Payments</CardTitle>
+                  <CardTitle className="text-xl font-bold">QR Code Payments</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-gray-600 mb-4">Generate QR codes for instant payments</p>
-                  <Button className="w-full">Generate QR Code</Button>
+                  <p className="text-gray-600 mb-6">Generate QR codes for instant payments</p>
+                  <Button className="w-full bg-gradient-to-r from-emerald-400 to-emerald-500 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
+                    Generate QR Code
+                  </Button>
                 </CardContent>
               </Card>
-              <Card>
+              <Card className="bg-white/80 backdrop-blur-sm border-white/20 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-3">
                 <CardHeader>
-                  <CardTitle>Kaia Payments</CardTitle>
+                  <CardTitle className="text-xl font-bold">Kaia Payments</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-gray-600 mb-4">Send payments on Kaia blockchain</p>
-                  <Button className="w-full" variant="outline">Send Payment</Button>
+                  <p className="text-gray-600 mb-6">Send payments on Kaia blockchain</p>
+                  <Button className="w-full border-emerald-200 text-emerald-600 hover:bg-emerald-50 hover:border-emerald-300" variant="outline">
+                    Send Payment
+                  </Button>
                 </CardContent>
               </Card>
             </div>
@@ -86,28 +96,34 @@ function AppContent({}: AppContentProps) {
         );
       case 'trading':
         return (
-          <div className="space-y-6">
+          <div className="space-y-8">
             <div className="text-center">
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Trading & Earn</h2>
-              <p className="text-gray-600">Trade tokens and earn rewards</p>
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-green-800 to-emerald-600 bg-clip-text text-transparent mb-4">
+                Trading & Earn
+              </h1>
+              <p className="text-lg text-gray-600">Trade tokens and earn rewards</p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Card>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <Card className="bg-white/80 backdrop-blur-sm border-white/20 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-3">
                 <CardHeader>
-                  <CardTitle>Token Swap</CardTitle>
+                  <CardTitle className="text-xl font-bold">Token Swap</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-gray-600 mb-4">Swap between different tokens</p>
-                  <Button className="w-full">Start Swap</Button>
+                  <p className="text-gray-600 mb-6">Swap between different tokens</p>
+                  <Button className="w-full bg-gradient-to-r from-emerald-400 to-emerald-500 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
+                    Start Swap
+                  </Button>
                 </CardContent>
               </Card>
-              <Card>
+              <Card className="bg-white/80 backdrop-blur-sm border-white/20 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-3">
                 <CardHeader>
-                  <CardTitle>Trading Rewards</CardTitle>
+                  <CardTitle className="text-xl font-bold">Trading Rewards</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-gray-600 mb-4">Earn rewards for trading activities</p>
-                  <Button className="w-full" variant="outline">View Rewards</Button>
+                  <p className="text-gray-600 mb-6">Earn rewards for trading activities</p>
+                  <Button className="w-full border-emerald-200 text-emerald-600 hover:bg-emerald-50 hover:border-emerald-300" variant="outline">
+                    View Rewards
+                  </Button>
                 </CardContent>
               </Card>
             </div>
@@ -126,17 +142,17 @@ function AppContent({}: AppContentProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
+      <header className="bg-white/95 backdrop-blur-md shadow-lg border-b border-white/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-gradient-to-br from-emerald-400 to-emerald-500 rounded-xl flex items-center justify-center shadow-lg">
                 <span className="text-white font-bold text-lg">LY</span>
               </div>
-              <h1 className="text-xl font-bold text-gray-900">LINE Yield</h1>
+              <h1 className="text-xl font-bold bg-gradient-to-r from-green-800 to-green-600 bg-clip-text text-transparent">LINE Yield</h1>
             </div>
 
             {/* Desktop Navigation */}
@@ -146,10 +162,10 @@ function AppContent({}: AppContentProps) {
                   key={item.id}
                   onClick={() => setActiveTab(item.id as typeof activeTab)}
                   className={cn(
-                    'flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
+                    'flex items-center space-x-2 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-300',
                     activeTab === item.id
-                      ? 'bg-blue-100 text-blue-700'
-                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                      ? 'bg-gradient-to-r from-emerald-100 to-green-100 text-emerald-700 shadow-lg'
+                      : 'text-gray-600 hover:text-emerald-600 hover:bg-emerald-50 hover:shadow-md'
                   )}
                 >
                   <span>{item.icon}</span>
@@ -174,6 +190,7 @@ function AppContent({}: AppContentProps) {
                       disconnect();
                       showSuccess('Wallet Disconnected', 'Your wallet has been successfully disconnected.');
                     }}
+                    className="border-emerald-200 text-emerald-600 hover:bg-emerald-50 hover:border-emerald-300"
                   >
                     Disconnect
                   </Button>
@@ -184,6 +201,7 @@ function AppContent({}: AppContentProps) {
                     connect();
                     showSuccess('Wallet Connected', 'Your wallet has been successfully connected to Kaia network.');
                   }}
+                  className="bg-gradient-to-r from-emerald-400 to-emerald-500 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
                 >
                   Connect Wallet
                 </Button>
@@ -199,7 +217,7 @@ function AppContent({}: AppContentProps) {
       </div>
 
       {/* Mobile Navigation */}
-      <div className="lg:hidden bg-white border-b border-gray-200">
+      <div className="lg:hidden bg-white/95 backdrop-blur-md border-b border-white/20">
         <div className="px-4 py-2">
           <div className="flex space-x-1 overflow-x-auto">
             {navigationItems.map((item) => (
@@ -207,10 +225,10 @@ function AppContent({}: AppContentProps) {
                 key={item.id}
                 onClick={() => setActiveTab(item.id as typeof activeTab)}
                 className={cn(
-                  'flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors',
+                  'flex items-center space-x-2 px-3 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all duration-300',
                   activeTab === item.id
-                    ? 'bg-blue-100 text-blue-700'
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                    ? 'bg-gradient-to-r from-emerald-100 to-green-100 text-emerald-700 shadow-lg'
+                    : 'text-gray-600 hover:text-emerald-600 hover:bg-emerald-50 hover:shadow-md'
                 )}
               >
                 <span>{item.icon}</span>
@@ -227,25 +245,25 @@ function AppContent({}: AppContentProps) {
       </main>
 
       {/* Footer */}
-      <footer className="bg-white border-t border-gray-200 mt-16">
+      <footer className="bg-white/95 backdrop-blur-md border-t border-white/20 mt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
               <h3 className="text-sm font-semibold text-gray-900 mb-4">Product</h3>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><button onClick={() => setActiveTab('strategies')} className="hover:text-gray-900">Yield Farming</button></li>
-                <li><button onClick={() => setActiveTab('nft')} className="hover:text-gray-900">NFT Marketplace</button></li>
-                <li><button onClick={() => setActiveTab('referral')} className="hover:text-gray-900">Referral Program</button></li>
-                <li><button onClick={() => setActiveTab('payments')} className="hover:text-gray-900">Payment System</button></li>
+                <li><button onClick={() => setActiveTab('strategies')} className="hover:text-emerald-600 transition-colors">Yield Farming</button></li>
+                <li><button onClick={() => setActiveTab('nft')} className="hover:text-emerald-600 transition-colors">NFT Marketplace</button></li>
+                <li><button onClick={() => setActiveTab('referral')} className="hover:text-emerald-600 transition-colors">Referral Program</button></li>
+                <li><button onClick={() => setActiveTab('payments')} className="hover:text-emerald-600 transition-colors">Payment System</button></li>
               </ul>
             </div>
             <div>
               <h3 className="text-sm font-semibold text-gray-900 mb-4">Resources</h3>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><a href="#" className="hover:text-gray-900">Documentation</a></li>
-                <li><a href="#" className="hover:text-gray-900">API Reference</a></li>
-                <li><a href="#" className="hover:text-gray-900">Smart Contracts</a></li>
-                <li><a href="#" className="hover:text-gray-900">Security Audit</a></li>
+                <li><a href="#" className="hover:text-emerald-600 transition-colors">Documentation</a></li>
+                <li><a href="#" className="hover:text-emerald-600 transition-colors">API Reference</a></li>
+                <li><a href="#" className="hover:text-emerald-600 transition-colors">Smart Contracts</a></li>
+                <li><a href="#" className="hover:text-emerald-600 transition-colors">Security Audit</a></li>
               </ul>
             </div>
             <div>
@@ -260,10 +278,10 @@ function AppContent({}: AppContentProps) {
             <div>
               <h3 className="text-sm font-semibold text-gray-900 mb-4">Support</h3>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li><a href="#" className="hover:text-gray-900">Help Center</a></li>
-                <li><a href="#" className="hover:text-gray-900">Contact Us</a></li>
-                <li><a href="#" className="hover:text-gray-900">Bug Reports</a></li>
-                <li><a href="#" className="hover:text-gray-900">Feature Requests</a></li>
+                <li><a href="#" className="hover:text-emerald-600 transition-colors">Help Center</a></li>
+                <li><a href="#" className="hover:text-emerald-600 transition-colors">Contact Us</a></li>
+                <li><a href="#" className="hover:text-emerald-600 transition-colors">Bug Reports</a></li>
+                <li><a href="#" className="hover:text-emerald-600 transition-colors">Feature Requests</a></li>
               </ul>
             </div>
           </div>
@@ -273,9 +291,9 @@ function AppContent({}: AppContentProps) {
                 © 2024 LINE Yield Platform. All rights reserved.
               </p>
               <div className="flex space-x-6 mt-4 md:mt-0">
-                <a href="#" className="text-sm text-gray-600 hover:text-gray-900">Privacy Policy</a>
-                <a href="#" className="text-sm text-gray-600 hover:text-gray-900">Terms of Service</a>
-                <a href="#" className="text-sm text-gray-600 hover:text-gray-900">Cookie Policy</a>
+                <a href="#" className="text-sm text-gray-600 hover:text-emerald-600 transition-colors">Privacy Policy</a>
+                <a href="#" className="text-sm text-gray-600 hover:text-emerald-600 transition-colors">Terms of Service</a>
+                <a href="#" className="text-sm text-gray-600 hover:text-emerald-600 transition-colors">Cookie Policy</a>
               </div>
             </div>
           </div>
