@@ -6,7 +6,11 @@ import Chatbot from '../components/Chatbot';
 import { LineNextIntegration } from '../components/LineNextIntegration';
 import { ConnectWallet } from '@shared/components';
 
-const Landing = () => {
+interface LandingProps {
+  onNavigate?: (tab: string) => void;
+}
+
+const Landing: React.FC<LandingProps> = ({ onNavigate }) => {
   const { isConnected, connect } = useWallet();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -23,8 +27,10 @@ const Landing = () => {
     if (!isConnected) {
       connect();
     }
-    // For now, just show an alert - can be replaced with actual dashboard navigation later
-    alert('Welcome to LINE Yield! Dashboard functionality will be implemented here.');
+    // Navigate to dashboard
+    if (onNavigate) {
+      onNavigate('dashboard');
+    }
   };
 
   const handleConnectWallet = () => {
@@ -48,11 +54,11 @@ const Landing = () => {
             
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex gap-6 xl:gap-8">
-              <a href="#" className="text-gray-700 font-medium hover:text-green-600 transition-colors relative after:absolute after:bottom-[-5px] after:left-0 after:w-0 after:h-0.5 after:bg-gradient-to-r after:from-emerald-400 after:to-emerald-500 after:transition-all hover:after:w-full">Home</a>
+              <button onClick={() => onNavigate?.('home')} className="text-gray-700 font-medium hover:text-green-600 transition-colors relative after:absolute after:bottom-[-5px] after:left-0 after:w-0 after:h-0.5 after:bg-gradient-to-r after:from-emerald-400 after:to-emerald-500 after:transition-all hover:after:w-full">Home</button>
               <a href="#features" className="text-gray-700 font-medium hover:text-green-600 transition-colors relative after:absolute after:bottom-[-5px] after:left-0 after:w-0 after:h-0.5 after:bg-gradient-to-r after:from-emerald-400 after:to-emerald-500 after:transition-all hover:after:w-full">Features</a>
               <a href="#how-it-works" className="text-gray-700 font-medium hover:text-green-600 transition-colors relative after:absolute after:bottom-[-5px] after:left-0 after:w-0 after:h-0.5 after:bg-gradient-to-r after:from-emerald-400 after:to-emerald-500 after:transition-all hover:after:w-full">How It Works</a>
-              <a href="#" className="text-gray-700 font-medium hover:text-green-600 transition-colors relative after:absolute after:bottom-[-5px] after:left-0 after:w-0 after:h-0.5 after:bg-gradient-to-r after:from-emerald-400 after:to-emerald-500 after:transition-all hover:after:w-full">Pricing</a>
-              <a href="#" className="text-gray-700 font-medium hover:text-green-600 transition-colors relative after:absolute after:bottom-[-5px] after:left-0 after:w-0 after:h-0.5 after:bg-gradient-to-r after:from-emerald-400 after:to-emerald-500 after:transition-all hover:after:w-full">Docs</a>
+              <button onClick={() => onNavigate?.('strategies')} className="text-gray-700 font-medium hover:text-green-600 transition-colors relative after:absolute after:bottom-[-5px] after:left-0 after:w-0 after:h-0.5 after:bg-gradient-to-r after:from-emerald-400 after:to-emerald-500 after:transition-all hover:after:w-full">Strategies</button>
+              <button onClick={() => onNavigate?.('dashboard')} className="text-gray-700 font-medium hover:text-green-600 transition-colors relative after:absolute after:bottom-[-5px] after:left-0 after:w-0 after:h-0.5 after:bg-gradient-to-r after:from-emerald-400 after:to-emerald-500 after:transition-all hover:after:w-full">Dashboard</button>
             </nav>
             
             {/* Desktop Actions */}
@@ -86,13 +92,15 @@ const Landing = () => {
           {isMobileMenuOpen && (
             <div className="md:hidden mt-4 py-4 border-t border-gray-200 bg-white/95 backdrop-blur-md rounded-lg shadow-lg">
               <nav className="flex flex-col space-y-4">
-                <a 
-                  href="#" 
-                  className="text-gray-700 font-medium hover:text-green-600 transition-colors px-4 py-2 rounded-lg hover:bg-green-50"
-                  onClick={() => setIsMobileMenuOpen(false)}
+                <button 
+                  onClick={() => {
+                    onNavigate?.('home');
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="text-gray-700 font-medium hover:text-green-600 transition-colors px-4 py-2 rounded-lg hover:bg-green-50 text-left"
                 >
                   Home
-                </a>
+                </button>
                 <a 
                   href="#features" 
                   className="text-gray-700 font-medium hover:text-green-600 transition-colors px-4 py-2 rounded-lg hover:bg-green-50"
@@ -107,20 +115,24 @@ const Landing = () => {
                 >
                   How It Works
                 </a>
-                <a 
-                  href="#" 
-                  className="text-gray-700 font-medium hover:text-green-600 transition-colors px-4 py-2 rounded-lg hover:bg-green-50"
-                  onClick={() => setIsMobileMenuOpen(false)}
+                <button 
+                  onClick={() => {
+                    onNavigate?.('strategies');
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="text-gray-700 font-medium hover:text-green-600 transition-colors px-4 py-2 rounded-lg hover:bg-green-50 text-left"
                 >
-                  Pricing
-                </a>
-                <a 
-                  href="#" 
-                  className="text-gray-700 font-medium hover:text-green-600 transition-colors px-4 py-2 rounded-lg hover:bg-green-50"
-                  onClick={() => setIsMobileMenuOpen(false)}
+                  Strategies
+                </button>
+                <button 
+                  onClick={() => {
+                    onNavigate?.('dashboard');
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="text-gray-700 font-medium hover:text-green-600 transition-colors px-4 py-2 rounded-lg hover:bg-green-50 text-left"
                 >
-                  Docs
-                </a>
+                  Dashboard
+                </button>
                 <div className="px-4 pt-4 border-t border-gray-200 space-y-3">
                   <Button 
                     variant="outline" 

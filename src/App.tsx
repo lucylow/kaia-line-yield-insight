@@ -13,6 +13,7 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 import { NetworkBanner } from './components/NetworkBanner';
 import WalletConnectButton from './components/WalletConnectButton.jsx';
 import WalletConnectDemo from './pages/WalletConnectDemo';
+import Landing from './pages/Landing';
 import { cn } from './utils/cn';
 import { performanceService } from './services/performanceService';
 
@@ -41,213 +42,7 @@ function AppContent({}: AppContentProps) {
   const renderContent = () => {
     switch (activeTab) {
       case 'home':
-        return (
-          <div className="text-center">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Welcome to LINE Yield Platform
-            </h2>
-            <p className="text-lg text-gray-600 mb-8">
-              A comprehensive DeFi platform integrated with LINE ecosystem on Kaia blockchain
-            </p>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-              <Card className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <CardTitle className="text-lg flex items-center">
-                    <span className="mr-2">📊</span>
-                    Portfolio Dashboard
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600 mb-4">
-                    Track your investments, earnings, and portfolio performance
-                  </p>
-                  <Button 
-                    onClick={() => setActiveTab('dashboard')}
-                    className="w-full"
-                  >
-                    View Dashboard
-                  </Button>
-                </CardContent>
-              </Card>
-              
-              <Card className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <CardTitle className="text-lg flex items-center">
-                    <span className="mr-2">🌱</span>
-                    Yield Farming
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600 mb-4">
-                    Earn rewards by providing liquidity to various DeFi protocols
-                  </p>
-                  <Button 
-                    onClick={() => setActiveTab('strategies')}
-                    className="w-full"
-                    variant="outline"
-                  >
-                    Start Farming
-                  </Button>
-                </CardContent>
-              </Card>
-              
-              <Card className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <CardTitle className="text-lg flex items-center">
-                    <span className="mr-2">🎨</span>
-                    NFT Marketplace
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600 mb-4">
-                    Buy, sell, and use NFTs as collateral for loans
-                  </p>
-                  <Button 
-                    onClick={() => setActiveTab('nft')}
-                    className="w-full"
-                    variant="outline"
-                  >
-                    Browse NFTs
-                  </Button>
-                </CardContent>
-              </Card>
-
-              <Card className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <CardTitle className="text-lg flex items-center">
-                    <span className="mr-2">🎯</span>
-                    Referral System
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600 mb-4">
-                    Invite friends and earn rewards from their activities
-                  </p>
-                  <Button 
-                    onClick={() => setActiveTab('referral')}
-                    className="w-full"
-                    variant="outline"
-                  >
-                    Invite Friends
-                  </Button>
-                </CardContent>
-              </Card>
-
-              <Card className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <CardTitle className="text-lg flex items-center">
-                    <span className="mr-2">💳</span>
-                    Payment System
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600 mb-4">
-                    QR code payments and Kaia blockchain transactions
-                  </p>
-                  <Button 
-                    onClick={() => setActiveTab('payments')}
-                    className="w-full"
-                    variant="outline"
-                  >
-                    Try Payments
-                  </Button>
-                </CardContent>
-              </Card>
-
-              <Card className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <CardTitle className="text-lg flex items-center">
-                    <span className="mr-2">📈</span>
-                    Trading & Earn
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600 mb-4">
-                    Trade tokens and earn rewards with every transaction
-                  </p>
-                  <Button 
-                    onClick={() => setActiveTab('trading')}
-                    className="w-full"
-                    variant="outline"
-                  >
-                    Start Trading
-                  </Button>
-                </CardContent>
-              </Card>
-
-              <Card className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <CardTitle className="text-lg flex items-center">
-                    <span className="mr-2">📈</span>
-                    Real-Time Analytics
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600 mb-4">
-                    Live market data, platform metrics, and performance analytics
-                  </p>
-                  <Button 
-                    onClick={() => setActiveTab('analytics')}
-                    className="w-full"
-                    variant="outline"
-                  >
-                    View Analytics
-                  </Button>
-                </CardContent>
-              </Card>
-
-              <Card className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <CardTitle className="text-lg flex items-center">
-                    <span className="mr-2">🔗</span>
-                    Wallet Connection
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600 mb-4">
-                    Connect with multiple wallet types including social logins and crypto wallets
-                  </p>
-                  <Button 
-                    onClick={() => setActiveTab('wallet-demo')}
-                    className="w-full"
-                    variant="outline"
-                  >
-                    Try Wallet Demo
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Quick Stats */}
-            <div className="mt-12 grid grid-cols-1 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
-              <Card>
-                <CardContent className="p-6 text-center">
-                  <p className="text-2xl font-bold text-blue-600">$2.4M</p>
-                  <p className="text-sm text-gray-600">Total Value Locked</p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="p-6 text-center">
-                  <p className="text-2xl font-bold text-green-600">8.5%</p>
-                  <p className="text-sm text-gray-600">Average APY</p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="p-6 text-center">
-                  <p className="text-2xl font-bold text-purple-600">1,247</p>
-                  <p className="text-sm text-gray-600">Active Users</p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="p-6 text-center">
-                  <p className="text-2xl font-bold text-orange-600">15</p>
-                  <p className="text-sm text-gray-600">Yield Strategies</p>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        );
+        return <Landing />;
       case 'dashboard':
         return <Dashboard />;
       case 'analytics':
@@ -324,6 +119,11 @@ function AppContent({}: AppContentProps) {
         return <Dashboard />;
     }
   };
+
+  // If we're on the landing page, render it directly without the app layout
+  if (activeTab === 'home') {
+    return <Landing onNavigate={(tab) => setActiveTab(tab as typeof activeTab)} />;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
