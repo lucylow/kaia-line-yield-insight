@@ -1,18 +1,22 @@
 import React from 'react';
 import { useWallet } from '../hooks/useWallet';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import { KLAYTN_TESTNET } from '../utils/constants';
 import { Wallet, Copy, ExternalLink } from 'lucide-react';
 import { truncateAddress } from '../utils/formatters';
 import { useToast } from '@/hooks/use-toast';
 
-export const ConnectWallet: React.FC = () => {
-  const { wallet, connectWallet, disconnectWallet } = useWallet();
+interface ConnectWalletProps {
+  className?: string;
+}
+
+export const ConnectWallet: React.FC<ConnectWalletProps> = ({ className = '' }) => {
+  const { address, isConnected, connect, disconnect, balanceFormatted, symbol } = useWallet();
   const { toast } = useToast();
 
   const handleConnect = async () => {
     try {
-      await connectWallet({ chainId: KLAYTN_TESTNET.chainId });
+      connect();
       toast({
         title: "Wallet Connected",
         description: "Successfully connected to Kaia testnet",
@@ -28,7 +32,7 @@ export const ConnectWallet: React.FC = () => {
   };
 
   const handleDisconnect = () => {
-    disconnectWallet();
+    disconnect();
     toast({
       title: "Wallet Disconnected",
       description: "Your wallet has been disconnected",
@@ -36,8 +40,8 @@ export const ConnectWallet: React.FC = () => {
   };
 
   const copyAddress = () => {
-    if (wallet.address) {
-      navigator.clipboard.writeText(wallet.address);
+    if (address) {
+      navigator.clipboard.writeText(address);
       toast({
         title: "Address Copied",
         description: "Wallet address copied to clipboard",
@@ -45,9 +49,9 @@ export const ConnectWallet: React.FC = () => {
     }
   };
 
-  if (wallet.isConnected) {
+  if (isConnected) {
     return (
-      <div className="bg-card rounded-xl p-4 shadow-card border">
+      <div className={`bg-card rounded-xl p-4 shadow-card border ${className}`}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-yield rounded-full flex items-center justify-center">
@@ -56,7 +60,7 @@ export const ConnectWallet: React.FC = () => {
             <div>
               <p className="font-medium text-card-foreground">Connected</p>
               <p className="text-sm text-muted-foreground">
-                {truncateAddress(wallet.address || '', 6, 4)}
+                {truncateAddress(address || '', 6, 4)}
               </p>
             </div>
           </div>
@@ -83,7 +87,7 @@ export const ConnectWallet: React.FC = () => {
         <div className="mt-3 pt-3 border-t border-border">
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">Balance</span>
-            <span className="font-medium">{wallet.balance} KLAY</span>
+            <span className="font-medium">{balanceFormatted} {symbol}</span>
           </div>
           <div className="flex justify-between text-sm mt-1">
             <span className="text-muted-foreground">Network</span>
@@ -95,7 +99,7 @@ export const ConnectWallet: React.FC = () => {
   }
 
   return (
-    <div className="bg-card rounded-3xl p-8 shadow-lg border text-center hover:shadow-xl transition-all duration-500">
+    <div className={`bg-card rounded-3xl p-8 shadow-lg border text-center hover:shadow-xl transition-all duration-500 ${className}`}>
       <div className="relative mb-8">
         <div className="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center mx-auto shadow-primary">
           <Wallet className="w-10 h-10 text-primary" />
@@ -114,7 +118,7 @@ export const ConnectWallet: React.FC = () => {
         onClick={handleConnect} 
         size="lg"
         className="w-full h-14 text-lg font-semibold shadow-primary hover:shadow-lg transition-all duration-300 hover:scale-105"
-        variant="hero"
+        variant="default"
       >
         <Wallet className="w-6 h-6 mr-3" />
         Connect Wallet

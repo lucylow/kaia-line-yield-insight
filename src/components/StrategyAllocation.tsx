@@ -2,7 +2,7 @@ import React from 'react';
 import { StrategyAllocation as StrategyAllocationType } from '../types/vault';
 import { formatCurrency } from '../utils/formatters';
 import { PieChart, Target, TrendingUp, RefreshCw, Clock, AlertCircle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 
 interface StrategyAllocationProps {
   strategies: StrategyAllocationType[];

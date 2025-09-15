@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useSecureApi } from '@/hooks/useSecureApi';
 import { useWallet } from '@/hooks/useWallet';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
