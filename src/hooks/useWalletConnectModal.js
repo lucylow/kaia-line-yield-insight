@@ -1,15 +1,8 @@
 import React, { useState, useCallback } from 'react';
-import { WalletType } from '@/sdk/WalletProviderSDK';
-
-interface WalletConnection {
-  walletType: WalletType | string;
-  address: string;
-  isConnected: boolean;
-}
 
 export const useWalletConnectModal = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [walletConnection, setWalletConnection] = useState<WalletConnection | null>(null);
+  const [walletConnection, setWalletConnection] = useState(null);
 
   const openModal = useCallback(() => {
     setIsModalOpen(true);
@@ -19,7 +12,7 @@ export const useWalletConnectModal = () => {
     setIsModalOpen(false);
   }, []);
 
-  const handleWalletConnected = useCallback((walletType: WalletType | string, address: string) => {
+  const handleWalletConnected = useCallback((walletType, address) => {
     setWalletConnection({
       walletType,
       address,

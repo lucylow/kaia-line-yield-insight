@@ -1,20 +1,14 @@
 import React from 'react';
-import { Button } from '@/components/ui/Button';
 import { Wallet, Copy, ExternalLink, LogOut } from 'lucide-react';
-import { useWalletConnectModal } from '@/hooks/useWalletConnectModal';
+import { useWalletConnectModal } from '../hooks/useWalletConnectModal';
 import WalletConnectModal from './WalletConnectModal';
-import { truncateAddress } from '@/utils/formatters';
-import { useToast } from '@/hooks/use-toast';
 
-interface WalletConnectButtonProps {
-  variant?: 'default' | 'outline' | 'ghost' | 'link';
-  size?: 'default' | 'sm' | 'lg' | 'icon';
-  className?: string;
-  showAddress?: boolean;
-  showDisconnect?: boolean;
-}
+const truncateAddress = (address, start = 6, end = 4) => {
+  if (!address) return '';
+  return `${address.slice(0, start)}...${address.slice(-end)}`;
+};
 
-export const WalletConnectButton: React.FC<WalletConnectButtonProps> = ({
+export const WalletConnectButton = ({
   variant = 'default',
   size = 'default',
   className = '',
@@ -22,21 +16,16 @@ export const WalletConnectButton: React.FC<WalletConnectButtonProps> = ({
   showDisconnect = true
 }) => {
   const { isModalOpen, walletConnection, openModal, closeModal, handleWalletConnected, disconnectWallet } = useWalletConnectModal();
-  const { toast } = useToast();
 
   const copyAddress = () => {
     if (walletConnection?.address) {
       navigator.clipboard.writeText(walletConnection.address);
-      toast({
-        title: "Address Copied",
-        description: "Wallet address copied to clipboard",
-      });
+      alert('Address copied to clipboard!');
     }
   };
 
   const openExplorer = () => {
     if (walletConnection?.address) {
-      // Open Kaia explorer
       const explorerUrl = `https://scope.kaia.one/account/${walletConnection.address}`;
       window.open(explorerUrl, '_blank');
     }
@@ -51,35 +40,29 @@ export const WalletConnectButton: React.FC<WalletConnectButtonProps> = ({
             <span className="text-sm font-medium text-gray-900">
               {truncateAddress(walletConnection.address, 6, 4)}
             </span>
-            <Button
-              variant="ghost"
-              size="sm"
+            <button
               onClick={copyAddress}
-              className="p-1 h-auto hover:bg-gray-200"
+              className="p-1 h-auto hover:bg-gray-200 rounded"
             >
               <Copy className="w-3 h-3 text-gray-500" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
+            </button>
+            <button
               onClick={openExplorer}
-              className="p-1 h-auto hover:bg-gray-200"
+              className="p-1 h-auto hover:bg-gray-200 rounded"
             >
               <ExternalLink className="w-3 h-3 text-gray-500" />
-            </Button>
+            </button>
           </div>
         )}
         
         {showDisconnect && (
-          <Button
-            variant="outline"
-            size="sm"
+          <button
             onClick={disconnectWallet}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
           >
             <LogOut className="w-4 h-4" />
             Disconnect
-          </Button>
+          </button>
         )}
         
         <WalletConnectModal
@@ -91,17 +74,17 @@ export const WalletConnectButton: React.FC<WalletConnectButtonProps> = ({
     );
   }
 
+  const buttonClass = `flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors ${className}`;
+
   return (
     <>
-      <Button
-        variant={variant}
-        size={size}
+      <button
         onClick={openModal}
-        className={`flex items-center gap-2 ${className}`}
+        className={buttonClass}
       >
         <Wallet className="w-4 h-4" />
         Connect Wallet
-      </Button>
+      </button>
       
       <WalletConnectModal
         isOpen={isModalOpen}
