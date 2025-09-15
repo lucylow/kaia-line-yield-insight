@@ -4,7 +4,7 @@ import { Button } from '../components/simple/Button';
 import { useWallet } from '../hooks/useWallet';
 import Chatbot from '../components/Chatbot';
 import { LineNextIntegration } from '../components/LineNextIntegration';
-import { ConnectWallet } from '@shared/components';
+import { ConnectWallet } from '../components/ConnectWallet';
 
 interface LandingProps {
   onNavigate?: (tab: string) => void;
