@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useWallet } from '../hooks/useWallet';
+import { useWallet } from '../providers/SimpleWalletProvider';
 import { useSupabaseVault } from '../hooks/useSupabaseVault';
 import { useSupabaseAuth } from '../hooks/useSupabaseAuth';
 import { BalanceCard } from '../components/BalanceCard';

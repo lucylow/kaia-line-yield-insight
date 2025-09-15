@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useToast } from './use-toast';
-import { useWallet } from './useWallet';
+import { useWallet } from '../providers/SimpleWalletProvider';
 
 export interface KaiaPayment {
   id: string;

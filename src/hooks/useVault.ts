@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { VaultData, Transaction } from '../types/vault';
-import { useWallet } from './useWallet';
+import { useWallet } from '../providers/SimpleWalletProvider';
 import { useToast } from '@/hooks/use-toast';
 
 export const useVault = (vaultAddress: string) => {

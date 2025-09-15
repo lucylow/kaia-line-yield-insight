@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { secureApiClient, SignedTransaction, UserNonce, WalletInfo } from '../services/SecureApiClient';
-import { useWallet } from './useWallet';
+import { useWallet } from '../providers/SimpleWalletProvider';
 import { useToast } from './use-toast';
 
 export interface UseSecureApiReturn {

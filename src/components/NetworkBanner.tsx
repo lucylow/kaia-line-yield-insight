@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNetworkCheck } from '../hooks/useWallet';
+import { useNetworkCheck } from '../providers/SimpleWalletProvider';
 import { cn } from '../utils/cn';
 
 interface NetworkBannerProps {

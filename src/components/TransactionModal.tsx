@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ProgressIndicator } from './ProgressIndicator';
-import { useWallet } from '../hooks/useWallet';
+import { useWallet } from '../providers/SimpleWalletProvider';
 import { formatCurrency } from '../utils/formatters';
 import { ArrowUpRight, ArrowDownLeft, Info, Zap, CheckCircle, Clock } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';

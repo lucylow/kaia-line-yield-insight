@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useQRPayment } from '../hooks/useQRPayment';
-import { useWallet } from '../hooks/useWallet';
+import { useWallet } from '../providers/SimpleWalletProvider';
 import { VAULT_ADDRESS } from '../utils/constants';
 import { 
   QrCode, 
