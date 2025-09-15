@@ -1,2 +1,2 @@
-// Re-export everything from Card.tsx for compatibility
-export * from './Card';
+// Re-export everything from simple/Card.tsx for compatibility
+export * from '../simple/Card';

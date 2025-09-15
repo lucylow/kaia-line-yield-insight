@@ -1,5 +1,5 @@
 import React from 'react';
-import { useWallet } from '../hooks/useWallet';
+import { useWallet } from '../providers/SimpleWalletProvider';
 import { Button } from '@/components/ui/Button';
 import { KLAYTN_TESTNET } from '../utils/constants';
 import { Wallet, Copy, ExternalLink } from 'lucide-react';
