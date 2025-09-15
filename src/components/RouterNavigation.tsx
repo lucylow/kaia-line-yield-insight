@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Sheet, SheetContent, SheetTrigger } from './ui/Sheet';
+import { Sheet, SheetContent, SheetTrigger } from './ui/sheet';
 import { Button } from './ui/Button';
 import { MenuIcon, X } from 'lucide-react';
 import { cn } from '../utils/cn';
