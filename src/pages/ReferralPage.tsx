@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ReferralPromotion } from '@shared/components/ReferralPromotion';
-import { cn } from '../utils/cn';
+import { cn } from '../lib/utils';
 
 interface ReferralLeaderboardEntry {
   rank: number;
