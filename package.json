@@ -8,17 +8,17 @@
   ],
   "scripts": {
     "dev": "vite",
-    "dev:liff": "pnpm --filter @line-yield/liff-app dev",
     "dev:web": "pnpm --filter @line-yield/web-app dev",
+    "dev:shared": "pnpm --filter @line-yield/shared dev",
     "build": "tsc && vite build",
     "build:dev": "vite build --mode development",
-    "build:all": "pnpm --filter @line-yield/shared build && pnpm --filter @line-yield/liff-app build && pnpm --filter @line-yield/web-app build",
-    "build:liff": "pnpm --filter @line-yield/liff-app build",
+    "build:all": "pnpm --filter @line-yield/shared build && pnpm --filter @line-yield/web-app build",
     "build:web": "pnpm --filter @line-yield/web-app build",
     "build:shared": "pnpm --filter @line-yield/shared build",
     "build:lovable": "tsc && vite build --mode production",
     "preview": "vite preview",
-    "install:all": "pnpm install && pnpm --filter @line-yield/shared install && pnpm --filter @line-yield/liff-app install && pnpm --filter @line-yield/web-app install"
+    "install:all": "pnpm install && pnpm --filter @line-yield/shared install && pnpm --filter @line-yield/web-app install",
+    "clean": "pnpm --filter @line-yield/shared clean && pnpm --filter @line-yield/web-app clean"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.12",
