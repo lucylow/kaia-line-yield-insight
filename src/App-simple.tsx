@@ -5,7 +5,7 @@ import { WalletConnectButton } from './components/WalletConnectButton';
 import { NetworkBanner } from './components/NetworkBanner';
 import { Button } from './components/simple/Button';
 import { Card, CardContent, CardHeader, CardTitle } from './components/simple/Card';
-import { cn } from './utils/cn';
+import { cn } from './lib/utils';
 
 function App() {
   const [activeTab, setActiveTab] = useState('loans');

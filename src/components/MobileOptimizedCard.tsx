@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/Card';
-import { cn } from '../utils/cn';
+import { cn } from '../lib/utils';
 
 interface MobileOptimizedCardProps {
   title: string;

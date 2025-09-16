@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { SimpleWalletProvider, useWallet } from '../providers/SimpleWalletProvider';
 import { Wallet, TrendingUp, Shield, ArrowUp, ArrowDown, BarChart3, History, Menu, X } from 'lucide-react';
-import { cn } from '../utils/cn';
+import { cn } from '../lib/utils';
 import WalletConnectButton from './WalletConnectButton';
 
 const LineYieldLogo = () => (

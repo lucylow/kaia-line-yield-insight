@@ -3,7 +3,7 @@ import { SimpleWalletProvider, useWallet } from './providers/SimpleWalletProvide
 import { Button } from './components/ui/Button';
 import { Card, CardHeader, CardContent, CardTitle } from './components/ui/Card';
 import { ErrorBoundary } from './components/ErrorBoundary';
-import { cn } from './utils/cn';
+import { cn } from './lib/utils';
 
 function AppContent() {
   const { address, isConnected, connect, disconnect, balanceFormatted, symbol } = useWallet();

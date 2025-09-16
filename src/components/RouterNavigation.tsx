@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Sheet, SheetContent, SheetTrigger } from './ui/sheet';
 import { Button } from './ui/Button';
 import { MenuIcon, X } from 'lucide-react';
-import { cn } from '../utils/cn';
+import { cn } from '../lib/utils';
 import WalletConnectButton from './WalletConnectButton';
 import { useWallet } from '../providers/SimpleWalletProvider';
 import { routeConfig } from '../router/routes';

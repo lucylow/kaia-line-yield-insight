@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
 import { useWallet } from '../hooks/useWallet';
-import { cn } from '../utils/cn';
+import { cn } from '../lib/utils';
 
 // Example ABI for USDT token
 const USDT_ABI = [

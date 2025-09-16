@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNetworkCheck } from '../providers/SimpleWalletProvider';
-import { cn } from '../utils/cn';
+import { cn } from '../lib/utils';
 
 interface NetworkBannerProps {
   className?: string;

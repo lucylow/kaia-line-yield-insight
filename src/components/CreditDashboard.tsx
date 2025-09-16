@@ -22,7 +22,7 @@ import {
   History,
   Settings
 } from 'lucide-react';
-import { cn } from '../utils/cn';
+import { cn } from '../lib/utils';
 
 interface CreditDashboardProps {
   userAddress: string;

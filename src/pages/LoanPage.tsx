@@ -3,7 +3,7 @@ import { useWallet } from '../hooks/useWallet';
 import { LoanTypes } from '@shared/components/LoanTypes';
 import { LoanCreator } from '@shared/components/LoanCreator';
 import { LoanManager } from '@shared/components/LoanManager';
-import { cn } from '../utils/cn';
+import { cn } from '../lib/utils';
 
 interface LoanType {
   id: number;

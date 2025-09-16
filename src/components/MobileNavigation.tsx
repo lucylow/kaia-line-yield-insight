@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { cn } from '../utils/cn';
+import { cn } from '../lib/utils';
 import { Menu, X, Home, BarChart3, Zap, TrendingUp, Palette, Target, History, CreditCard, Wallet } from 'lucide-react';
 
 interface NavigationItem {
