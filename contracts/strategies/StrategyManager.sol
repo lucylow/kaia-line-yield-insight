@@ -1,372 +1,478 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-import "@openzeppelin/contracts/access/AccessControl.sol";
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
-import "./IYieldStrategy.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "./interfaces/IStrategy.sol";
+import "./interfaces/IStrategyManager.sol";
 
 /**
  * @title StrategyManager
- * @notice Manages multiple yield strategies for the Kaia Wave Stablecoin DeFi vault
- * @dev Handles strategy allocation, rebalancing, and yield optimization
+ * @dev Manages allocation of funds across different yield strategies
  */
-contract StrategyManager is AccessControl, ReentrancyGuard, Pausable {
+contract StrategyManager is IStrategyManager, Ownable, ReentrancyGuard {
     using SafeERC20 for IERC20;
 
-    bytes32 public constant MANAGER_ROLE = keccak256("MANAGER_ROLE");
-    bytes32 public constant HARVESTER_ROLE = keccak256("HARVESTER_ROLE");
-    bytes32 public constant REBALANCER_ROLE = keccak256("REBALANCER_ROLE");
-
-    struct StrategyInfo {
-        address strategy;
-        uint256 allocation; // Allocation percentage (basis points)
-        uint256 balance; // Current balance in strategy
+    struct Strategy {
+        address strategyAddress;
+        uint256 allocation; // Basis points (10000 = 100%)
+        uint256 performance;
         bool active;
-        uint256 lastHarvestTime;
-        uint256 totalYield;
+        uint256 lastRebalance;
     }
 
-    struct AllocationConfig {
-        uint256 totalAllocation; // Total allocation percentage (should be 10000 = 100%)
-        uint256 rebalanceThreshold; // Threshold for triggering rebalance (basis points)
-        uint256 harvestCooldown; // Minimum time between harvests
-    }
-
-    IERC20 public immutable underlyingToken;
-    address public immutable vault;
+    // Strategy management
+    Strategy[] public strategies;
+    uint256 public totalAllocation;
+    uint256 public constant MAX_ALLOCATION = 10000; // 100%
     
-    StrategyInfo[] public strategies;
-    AllocationConfig public config;
+    // Asset management
+    IERC20 public asset;
+    uint256 public totalAssetsDeployed;
     
-    uint256 public totalDeposited;
-    uint256 public totalYieldEarned;
+    // Rebalancing
+    uint256 public rebalanceThreshold = 500; // 5% threshold for rebalancing
     uint256 public lastRebalanceTime;
-    uint256 public constant MAX_STRATEGIES = 10;
-
+    uint256 public rebalanceInterval = 1 days;
+    
+    // Events
     event StrategyAdded(address indexed strategy, uint256 allocation);
     event StrategyRemoved(address indexed strategy);
-    event StrategyAllocationUpdated(address indexed strategy, uint256 oldAllocation, uint256 newAllocation);
-    event Deposited(address indexed strategy, uint256 amount);
-    event Withdrawn(address indexed strategy, uint256 amount);
-    event Harvested(address indexed strategy, uint256 yieldAmount);
-    event Rebalanced(uint256 timestamp);
-    event ConfigUpdated(uint256 totalAllocation, uint256 rebalanceThreshold, uint256 harvestCooldown);
-
-    constructor(
-        address _underlyingToken,
-        address _vault,
-        address _admin
-    ) {
-        require(_underlyingToken != address(0), "Invalid underlying token");
-        require(_vault != address(0), "Invalid vault");
-        require(_admin != address(0), "Invalid admin");
-
-        underlyingToken = IERC20(_underlyingToken);
-        vault = _vault;
-
-        _grantRole(DEFAULT_ADMIN_ROLE, _admin);
-        _grantRole(MANAGER_ROLE, _admin);
-        _grantRole(HARVESTER_ROLE, _admin);
-        _grantRole(REBALANCER_ROLE, _admin);
-
-        // Default configuration
-        config = AllocationConfig({
-            totalAllocation: 10000, // 100%
-            rebalanceThreshold: 500, // 5%
-            harvestCooldown: 1 hours
-        });
+    event StrategyUpdated(address indexed strategy, uint256 allocation);
+    event AssetsAllocated(address indexed strategy, uint256 amount);
+    event AssetsDeallocated(address indexed strategy, uint256 amount);
+    event RebalanceExecuted(uint256 timestamp);
+    
+    // Errors
+    error InvalidStrategy();
+    error InvalidAllocation();
+    error AllocationExceedsMax();
+    error StrategyNotActive();
+    error InsufficientAssets();
+    error RebalanceNotReady();
+    
+    constructor(address _asset) {
+        asset = IERC20(_asset);
     }
-
-    modifier onlyVault() {
-        require(msg.sender == vault, "Only vault can call");
-        _;
-    }
-
-    modifier onlyManager() {
-        require(hasRole(MANAGER_ROLE, msg.sender), "Caller is not manager");
-        _;
-    }
-
-    modifier onlyHarvester() {
-        require(hasRole(HARVESTER_ROLE, msg.sender), "Caller is not harvester");
-        _;
-    }
-
-    modifier onlyRebalancer() {
-        require(hasRole(REBALANCER_ROLE, msg.sender), "Caller is not rebalancer");
-        _;
-    }
-
+    
     /**
-     * @notice Add a new yield strategy
-     * @param strategy Address of the strategy contract
-     * @param allocation Allocation percentage in basis points
+     * @dev Add a new strategy
+     * @param _strategy Strategy contract address
+     * @param _allocation Allocation in basis points
      */
-    function addStrategy(address strategy, uint256 allocation) external onlyManager {
-        require(strategy != address(0), "Invalid strategy address");
-        require(allocation > 0, "Allocation must be positive");
-        require(strategies.length < MAX_STRATEGIES, "Too many strategies");
-        require(IYieldStrategy(strategy).getUnderlyingToken() == address(underlyingToken), "Token mismatch");
-
-        strategies.push(StrategyInfo({
-            strategy: strategy,
-            allocation: allocation,
-            balance: 0,
-            active: true,
-            lastHarvestTime: 0,
-            totalYield: 0
-        }));
-
-        emit StrategyAdded(strategy, allocation);
-    }
-
-    /**
-     * @notice Remove a strategy
-     * @param index Index of the strategy to remove
-     */
-    function removeStrategy(uint256 index) external onlyManager {
-        require(index < strategies.length, "Invalid strategy index");
-        require(strategies[index].balance == 0, "Strategy has balance");
-
-        address strategy = strategies[index].strategy;
+    function addStrategy(address _strategy, uint256 _allocation) external onlyOwner {
+        if (_strategy == address(0)) revert InvalidStrategy();
+        if (_allocation == 0 || _allocation > MAX_ALLOCATION) revert InvalidAllocation();
+        if (totalAllocation + _allocation > MAX_ALLOCATION) revert AllocationExceedsMax();
         
-        // Move last strategy to the removed position
-        strategies[index] = strategies[strategies.length - 1];
-        strategies.pop();
-
-        emit StrategyRemoved(strategy);
+        strategies.push(Strategy({
+            strategyAddress: _strategy,
+            allocation: _allocation,
+            performance: 0,
+            active: true,
+            lastRebalance: block.timestamp
+        }));
+        
+        totalAllocation += _allocation;
+        emit StrategyAdded(_strategy, _allocation);
     }
-
+    
     /**
-     * @notice Update strategy allocation
-     * @param index Index of the strategy
-     * @param newAllocation New allocation percentage
+     * @dev Remove a strategy
+     * @param _index Index of strategy to remove
      */
-    function updateStrategyAllocation(uint256 index, uint256 newAllocation) external onlyManager {
-        require(index < strategies.length, "Invalid strategy index");
-        require(newAllocation > 0, "Allocation must be positive");
-
-        uint256 oldAllocation = strategies[index].allocation;
-        strategies[index].allocation = newAllocation;
-
-        emit StrategyAllocationUpdated(strategies[index].strategy, oldAllocation, newAllocation);
+    function removeStrategy(uint256 _index) external onlyOwner {
+        require(_index < strategies.length, "Invalid index");
+        
+        Strategy storage strategy = strategies[_index];
+        if (strategy.active) {
+            // Deallocate all assets from this strategy
+            uint256 strategyAssets = IStrategy(strategy.strategyAddress).getTotalAssets();
+            if (strategyAssets > 0) {
+                IStrategy(strategy.strategyAddress).emergencyWithdraw();
+            }
+            
+            totalAllocation -= strategy.allocation;
+            strategy.active = false;
+        }
+        
+        emit StrategyRemoved(strategy.strategyAddress);
     }
-
+    
     /**
-     * @notice Deposit funds into strategies
-     * @param amount Total amount to deposit
+     * @dev Update strategy allocation
+     * @param _index Index of strategy to update
+     * @param _allocation New allocation in basis points
      */
-    function deposit(uint256 amount) external onlyVault nonReentrant whenNotPaused {
-        require(amount > 0, "Amount must be positive");
-        require(strategies.length > 0, "No strategies available");
-
-        totalDeposited += amount;
-
-        // Distribute funds according to allocations
+    function updateStrategyAllocation(uint256 _index, uint256 _allocation) external onlyOwner {
+        require(_index < strategies.length, "Invalid index");
+        if (_allocation > MAX_ALLOCATION) revert InvalidAllocation();
+        
+        Strategy storage strategy = strategies[_index];
+        uint256 oldAllocation = strategy.allocation;
+        
+        totalAllocation = totalAllocation - oldAllocation + _allocation;
+        if (totalAllocation > MAX_ALLOCATION) revert AllocationExceedsMax();
+        
+        strategy.allocation = _allocation;
+        emit StrategyUpdated(strategy.strategyAddress, _allocation);
+    }
+    
+    /**
+     * @dev Allocate assets to strategies based on their allocations
+     * @param amount Amount of assets to allocate
+     */
+    function allocateAssets(uint256 amount) external override nonReentrant {
+        require(amount > 0, "Invalid amount");
+        require(asset.balanceOf(address(this)) >= amount, "Insufficient balance");
+        
+        totalAssetsDeployed += amount;
+        
         for (uint256 i = 0; i < strategies.length; i++) {
-            if (strategies[i].active) {
-                uint256 strategyAmount = (amount * strategies[i].allocation) / config.totalAllocation;
+            Strategy storage strategy = strategies[i];
+            if (strategy.active) {
+                uint256 allocationAmount = (amount * strategy.allocation) / MAX_ALLOCATION;
+                if (allocationAmount > 0) {
+                    asset.safeTransfer(strategy.strategyAddress, allocationAmount);
+                    IStrategy(strategy.strategyAddress).deposit(allocationAmount);
+                    emit AssetsAllocated(strategy.strategyAddress, allocationAmount);
+                }
+            }
+        }
+    }
+    
+    /**
+     * @dev Deallocate assets from strategies
+     * @param amount Amount of assets to deallocate
+     */
+    function deallocateAssets(uint256 amount) external override nonReentrant {
+        require(amount > 0, "Invalid amount");
+        require(amount <= totalAssetsDeployed, "Insufficient deployed assets");
+        
+        totalAssetsDeployed -= amount;
+        
+        // Deallocate proportionally from all strategies
+        for (uint256 i = 0; i < strategies.length; i++) {
+            Strategy storage strategy = strategies[i];
+            if (strategy.active) {
+                uint256 strategyAssets = IStrategy(strategy.strategyAddress).getTotalAssets();
+                uint256 deallocateAmount = (amount * strategyAssets) / totalAssetsDeployed;
                 
-                if (strategyAmount > 0) {
-                    // Transfer tokens to strategy
-                    underlyingToken.safeTransfer(strategies[i].strategy, strategyAmount);
-                    
-                    // Call strategy deposit
-                    uint256 shares = IYieldStrategy(strategies[i].strategy).deposit(strategyAmount);
-                    strategies[i].balance += strategyAmount;
-
-                    emit Deposited(strategies[i].strategy, strategyAmount);
+                if (deallocateAmount > 0 && deallocateAmount <= strategyAssets) {
+                    uint256 withdrawn = IStrategy(strategy.strategyAddress).withdraw(deallocateAmount);
+                    emit AssetsDeallocated(strategy.strategyAddress, withdrawn);
                 }
             }
         }
     }
-
+    
     /**
-     * @notice Withdraw funds from strategies
-     * @param amount Amount to withdraw
-     * @return withdrawn Actual amount withdrawn
+     * @dev Execute rebalancing based on performance
      */
-    function withdraw(uint256 amount) external onlyVault nonReentrant returns (uint256 withdrawn) {
-        require(amount > 0, "Amount must be positive");
-        require(amount <= totalDeposited, "Insufficient balance");
-
-        uint256 remainingAmount = amount;
-
-        // Withdraw from strategies proportionally
-        for (uint256 i = 0; i < strategies.length && remainingAmount > 0; i++) {
-            if (strategies[i].active && strategies[i].balance > 0) {
-                uint256 strategyAmount = (amount * strategies[i].balance) / totalDeposited;
-                if (strategyAmount > remainingAmount) {
-                    strategyAmount = remainingAmount;
-                }
-
-                uint256 withdrawnFromStrategy = IYieldStrategy(strategies[i].strategy).withdraw(strategyAmount);
-                strategies[i].balance -= withdrawnFromStrategy;
-                withdrawn += withdrawnFromStrategy;
-                remainingAmount -= withdrawnFromStrategy;
-
-                emit Withdrawn(strategies[i].strategy, withdrawnFromStrategy);
-            }
+    function rebalance() external {
+        if (block.timestamp < lastRebalanceTime + rebalanceInterval) {
+            revert RebalanceNotReady();
         }
-
-        totalDeposited -= withdrawn;
-    }
-
-    /**
-     * @notice Harvest yield from all strategies
-     * @return totalYield Total yield harvested
-     */
-    function harvestAll() external onlyHarvester nonReentrant returns (uint256 totalYield) {
-        require(block.timestamp >= lastRebalanceTime + config.harvestCooldown, "Harvest cooldown not met");
-
+        
+        // Calculate performance for each strategy
+        uint256[] memory currentAPYs = new uint256[](strategies.length);
+        uint256 totalAPY = 0;
+        uint256 activeStrategies = 0;
+        
         for (uint256 i = 0; i < strategies.length; i++) {
-            if (strategies[i].active) {
-                uint256 yieldAmount = IYieldStrategy(strategies[i].strategy).harvest();
-                if (yieldAmount > 0) {
-                    strategies[i].totalYield += yieldAmount;
-                    totalYield += yieldAmount;
-                    strategies[i].lastHarvestTime = block.timestamp;
-
-                    emit Harvested(strategies[i].strategy, yieldAmount);
-                }
+            Strategy storage strategy = strategies[i];
+            if (strategy.active) {
+                currentAPYs[i] = IStrategy(strategy.strategyAddress).getAPY();
+                totalAPY += currentAPYs[i];
+                activeStrategies++;
+                strategy.performance = currentAPYs[i];
             }
         }
-
-        totalYieldEarned += totalYield;
+        
+        require(totalAPY > 0, "No active strategies with valid APY");
+        require(activeStrategies > 1, "Need at least 2 strategies for rebalancing");
+        
+        // Check if rebalancing is needed based on threshold
+        bool needsRebalance = _checkRebalanceNeeded(currentAPYs, totalAPY);
+        
+        if (needsRebalance) {
+            _executeRebalance(currentAPYs, totalAPY);
+        }
+        
         lastRebalanceTime = block.timestamp;
+        emit RebalanceExecuted(block.timestamp);
     }
-
+    
     /**
-     * @notice Rebalance strategies based on current allocations
+     * @dev Check if rebalancing is needed based on threshold
      */
-    function rebalance() external onlyRebalancer nonReentrant {
-        require(strategies.length > 0, "No strategies available");
-
-        uint256 totalBalance = getTotalBalance();
-        if (totalBalance == 0) return;
-
-        // Check if rebalancing is needed
-        bool needsRebalancing = false;
+    function _checkRebalanceNeeded(uint256[] memory currentAPYs, uint256 totalAPY) internal view returns (bool) {
+        for (uint256 i = 0; i < strategies.length; i++) {
+            Strategy memory strategy = strategies[i];
+            if (!strategy.active) continue;
+            
+            uint256 targetAllocation = (currentAPYs[i] * MAX_ALLOCATION) / totalAPY;
+            uint256 currentAllocation = strategy.allocation;
+            
+            // Check if difference exceeds threshold
+            if (targetAllocation > currentAllocation + rebalanceThreshold || 
+                targetAllocation < currentAllocation - rebalanceThreshold) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * @dev Execute the actual rebalancing
+     */
+    function _executeRebalance(uint256[] memory currentAPYs, uint256 totalAPY) internal {
+        uint256 totalAssetsValue = totalAssetsDeployed;
+        require(totalAssetsValue > 0, "No assets to rebalance");
+        
+        // Calculate target allocations
+        uint256[] memory targetAllocations = new uint256[](strategies.length);
+        uint256 totalTargetAllocation = 0;
+        
         for (uint256 i = 0; i < strategies.length; i++) {
             if (strategies[i].active) {
-                uint256 targetBalance = (totalBalance * strategies[i].allocation) / config.totalAllocation;
-                uint256 currentBalance = strategies[i].balance;
-                
-                if (currentBalance > targetBalance) {
-                    uint256 excess = currentBalance - targetBalance;
-                    if (excess > (targetBalance * config.rebalanceThreshold) / 10000) {
-                        needsRebalancing = true;
-                        break;
-                    }
+                targetAllocations[i] = (currentAPYs[i] * MAX_ALLOCATION) / totalAPY;
+                totalTargetAllocation += targetAllocations[i];
+            }
+        }
+        
+        // Normalize allocations to ensure they sum to 100%
+        if (totalTargetAllocation != MAX_ALLOCATION) {
+            for (uint256 i = 0; i < strategies.length; i++) {
+                if (strategies[i].active) {
+                    targetAllocations[i] = (targetAllocations[i] * MAX_ALLOCATION) / totalTargetAllocation;
                 }
             }
         }
-
-        if (!needsRebalancing) return;
-
-        // Perform rebalancing
+        
+        // Execute rebalancing
         for (uint256 i = 0; i < strategies.length; i++) {
-            if (strategies[i].active) {
-                uint256 targetBalance = (totalBalance * strategies[i].allocation) / config.totalAllocation;
-                uint256 currentBalance = strategies[i].balance;
-
-                if (currentBalance > targetBalance) {
-                    // Withdraw excess
-                    uint256 excess = currentBalance - targetBalance;
-                    uint256 withdrawn = IYieldStrategy(strategies[i].strategy).withdraw(excess);
-                    strategies[i].balance -= withdrawn;
-                } else if (currentBalance < targetBalance) {
-                    // Deposit more
-                    uint256 needed = targetBalance - currentBalance;
-                    underlyingToken.safeTransfer(strategies[i].strategy, needed);
-                    uint256 shares = IYieldStrategy(strategies[i].strategy).deposit(needed);
-                    strategies[i].balance += needed;
+            Strategy storage strategy = strategies[i];
+            if (!strategy.active) continue;
+            
+            uint256 targetAllocation = targetAllocations[i];
+            uint256 currentAllocation = strategy.allocation;
+            
+            if (targetAllocation > currentAllocation + rebalanceThreshold) {
+                // This strategy should receive more funds
+                uint256 amountToAdd = (targetAllocation - currentAllocation) * totalAssetsValue / MAX_ALLOCATION;
+                if (amountToAdd > 0) {
+                    _allocateToStrategy(i, amountToAdd);
+                }
+            } else if (targetAllocation < currentAllocation - rebalanceThreshold) {
+                // This strategy should have funds reduced
+                uint256 amountToRemove = (currentAllocation - targetAllocation) * totalAssetsValue / MAX_ALLOCATION;
+                if (amountToRemove > 0) {
+                    _deallocateFromStrategy(i, amountToRemove);
                 }
             }
+            
+            // Update allocation
+            strategy.allocation = targetAllocation;
         }
-
-        emit Rebalanced(block.timestamp);
     }
-
+    
     /**
-     * @notice Get total balance across all strategies
-     * @return balance Total balance
+     * @dev Internal function to allocate funds to a specific strategy
      */
-    function getTotalBalance() public view returns (uint256 balance) {
+    function _allocateToStrategy(uint256 _index, uint256 _amount) internal {
+        Strategy storage strategy = strategies[_index];
+        require(asset.balanceOf(address(this)) >= _amount, "Insufficient asset balance");
+        
+        asset.safeTransfer(strategy.strategyAddress, _amount);
+        IStrategy(strategy.strategyAddress).deposit(_amount);
+        emit AssetsAllocated(strategy.strategyAddress, _amount);
+    }
+    
+    /**
+     * @dev Internal function to deallocate funds from a specific strategy
+     */
+    function _deallocateFromStrategy(uint256 _index, uint256 _amount) internal {
+        Strategy storage strategy = strategies[_index];
+        uint256 strategyAssets = IStrategy(strategy.strategyAddress).getTotalAssets();
+        
+        // Only withdraw what's available
+        uint256 amountToWithdraw = _amount > strategyAssets ? strategyAssets : _amount;
+        
+        if (amountToWithdraw > 0) {
+            uint256 withdrawn = IStrategy(strategy.strategyAddress).withdraw(amountToWithdraw);
+            emit AssetsDeallocated(strategy.strategyAddress, withdrawn);
+        }
+    }
+    
+    /**
+     * @dev Get total assets across all strategies
+     * @return Total assets deployed
+     */
+    function getTotalAssets() external view override returns (uint256) {
+        return totalAssetsDeployed;
+    }
+    
+    /**
+     * @dev Get current weighted average APY
+     * @return Weighted average APY in basis points
+     */
+    function getCurrentAPY() external view override returns (uint256) {
+        uint256 totalWeightedAPY = 0;
+        uint256 totalWeight = 0;
+        
+        for (uint256 i = 0; i < strategies.length; i++) {
+            Strategy memory strategy = strategies[i];
+            if (strategy.active) {
+                uint256 apy = IStrategy(strategy.strategyAddress).getAPY();
+                totalWeightedAPY += apy * strategy.allocation;
+                totalWeight += strategy.allocation;
+            }
+        }
+        
+        return totalWeight > 0 ? totalWeightedAPY / totalWeight : 0;
+    }
+    
+    /**
+     * @dev Get active strategies
+     * @return Array of active strategy addresses
+     */
+    function getActiveStrategies() external view override returns (address[] memory) {
+        uint256 activeCount = 0;
         for (uint256 i = 0; i < strategies.length; i++) {
             if (strategies[i].active) {
-                balance += IYieldStrategy(strategies[i].strategy).balance();
+                activeCount++;
             }
         }
-    }
-
-    /**
-     * @notice Get strategy information
-     * @param index Index of the strategy
-     * @return info Strategy information
-     */
-    function getStrategyInfo(uint256 index) external view returns (StrategyInfo memory info) {
-        require(index < strategies.length, "Invalid strategy index");
-        return strategies[index];
-    }
-
-    /**
-     * @notice Get all strategies
-     * @return strategiesList Array of strategy information
-     */
-    function getAllStrategies() external view returns (StrategyInfo[] memory strategiesList) {
-        return strategies;
-    }
-
-    /**
-     * @notice Update configuration
-     * @param _totalAllocation New total allocation
-     * @param _rebalanceThreshold New rebalance threshold
-     * @param _harvestCooldown New harvest cooldown
-     */
-    function updateConfig(
-        uint256 _totalAllocation,
-        uint256 _rebalanceThreshold,
-        uint256 _harvestCooldown
-    ) external onlyManager {
-        require(_totalAllocation <= 10000, "Invalid total allocation");
-        require(_rebalanceThreshold <= 1000, "Invalid rebalance threshold");
-
-        config.totalAllocation = _totalAllocation;
-        config.rebalanceThreshold = _rebalanceThreshold;
-        config.harvestCooldown = _harvestCooldown;
-
-        emit ConfigUpdated(_totalAllocation, _rebalanceThreshold, _harvestCooldown);
-    }
-
-    /**
-     * @notice Emergency pause
-     */
-    function pause() external onlyManager {
-        _pause();
-    }
-
-    /**
-     * @notice Unpause
-     */
-    function unpause() external onlyManager {
-        _unpause();
-    }
-
-    /**
-     * @notice Emergency withdraw all funds
-     */
-    function emergencyWithdraw() external onlyManager {
+        
+        address[] memory activeStrategies = new address[](activeCount);
+        uint256 index = 0;
         for (uint256 i = 0; i < strategies.length; i++) {
-            if (strategies[i].active && strategies[i].balance > 0) {
-                uint256 withdrawn = IYieldStrategy(strategies[i].strategy).withdraw(strategies[i].balance);
-                strategies[i].balance = 0;
+            if (strategies[i].active) {
+                activeStrategies[index] = strategies[i].strategyAddress;
+                index++;
             }
         }
+        
+        return activeStrategies;
+    }
+    
+    /**
+     * @dev Get strategy allocations
+     * @return strategies Array of strategy addresses
+     * @return allocations Array of allocation amounts
+     */
+    function getStrategyAllocations() external view override returns (address[] memory strategies, uint256[] memory allocations) {
+        strategies = new address[](strategies.length);
+        allocations = new uint256[](strategies.length);
+        
+        for (uint256 i = 0; i < strategies.length; i++) {
+            strategies[i] = strategies[i].strategyAddress;
+            allocations[i] = strategies[i].allocation;
+        }
+    }
+    
+    /**
+     * @dev Emergency withdraw all assets from all strategies
+     */
+    function emergencyWithdrawAll() external override onlyOwner {
+        for (uint256 i = 0; i < strategies.length; i++) {
+            Strategy storage strategy = strategies[i];
+            if (strategy.active) {
+                IStrategy(strategy.strategyAddress).emergencyWithdraw();
+            }
+        }
+        totalAssetsDeployed = 0;
+    }
+    
+    /**
+     * @dev Set rebalance threshold
+     * @param _threshold New threshold in basis points
+     */
+    function setRebalanceThreshold(uint256 _threshold) external onlyOwner {
+        rebalanceThreshold = _threshold;
+    }
+    
+    /**
+     * @dev Set rebalance interval
+     * @param _interval New interval in seconds
+     */
+    function setRebalanceInterval(uint256 _interval) external onlyOwner {
+        rebalanceInterval = _interval;
+    }
+    
+    /**
+     * @dev Check if rebalancing can be executed
+     * @return True if rebalancing is ready
+     */
+    function canRebalance() external view returns (bool) {
+        return block.timestamp >= lastRebalanceTime + rebalanceInterval;
+    }
+    
+    /**
+     * @dev Get next rebalance time
+     * @return Timestamp when next rebalancing can occur
+     */
+    function getNextRebalanceTime() external view returns (uint256) {
+        return lastRebalanceTime + rebalanceInterval;
+    }
+    
+    /**
+     * @dev Get strategy performance data
+     * @return strategies Array of strategy addresses
+     * @return apys Array of current APYs
+     * @return allocations Array of current allocations
+     * @return performances Array of performance scores
+     */
+    function getStrategyPerformance() external view returns (
+        address[] memory strategies,
+        uint256[] memory apys,
+        uint256[] memory allocations,
+        uint256[] memory performances
+    ) {
+        uint256 activeCount = 0;
+        for (uint256 i = 0; i < strategies.length; i++) {
+            if (strategies[i].active) {
+                activeCount++;
+            }
+        }
+        
+        strategies = new address[](activeCount);
+        apys = new uint256[](activeCount);
+        allocations = new uint256[](activeCount);
+        performances = new uint256[](activeCount);
+        
+        uint256 index = 0;
+        for (uint256 i = 0; i < strategies.length; i++) {
+            if (strategies[i].active) {
+                strategies[index] = strategies[i].strategyAddress;
+                apys[index] = IStrategy(strategies[i].strategyAddress).getAPY();
+                allocations[index] = strategies[i].allocation;
+                performances[index] = strategies[i].performance;
+                index++;
+            }
+        }
+    }
+    
+    /**
+     * @dev Get rebalancing statistics
+     * @return lastRebalanceTime Last rebalance timestamp
+     * @return nextRebalanceTime Next rebalance timestamp
+     * @return rebalanceThreshold Current threshold
+     * @return rebalanceInterval Current interval
+     */
+    function getRebalancingStats() external view returns (
+        uint256 lastRebalanceTime,
+        uint256 nextRebalanceTime,
+        uint256 rebalanceThreshold,
+        uint256 rebalanceInterval
+    ) {
+        return (
+            lastRebalanceTime,
+            lastRebalanceTime + rebalanceInterval,
+            rebalanceThreshold,
+            rebalanceInterval
+        );
     }
 }
-
-
-

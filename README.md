@@ -110,60 +110,76 @@ Solidity ^0.8.19
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/lucylow/line-yield.git
-   cd line-yield
+   git clone https://github.com/lucylow/kaia-line-yield-insight.git
+   cd kaia-line-yield-insight
    ```
 
-2. **Create pnpm workspace configuration**
-   Create a file named `pnpm-workspace.yaml` in the root directory:
-   ```yaml
-   packages:
-     - 'packages/*'
-   ```
-
-3. **Install pnpm globally (if not already installed)**
+2. **Install pnpm globally (if not already installed)**
    ```bash
    npm install -g pnpm
    ```
 
-4. **Install dependencies**
+3. **Install dependencies**
    From the root directory, install all dependencies:
    ```bash
    pnpm install
    ```
 
-5. **Environment Configuration**
-   ```bash
-   cp env.example .env
-   ```
-   
-   Update the `.env` file with your configuration:
-   ```bash
-   VITE_REOWN_PROJECT_ID=your_project_id_here
-   VITE_APP_URL=http://localhost:5173
-   VITE_API_BASE_URL=http://localhost:3000
-   ```
-
-6. **Get Reown Project ID**
-   - Visit [Reown Dashboard](https://dashboard.reown.com)
-   - Create a new project
-   - Copy your Project ID to the `.env` file
-
-7. **Start development server**
+4. **Environment Configuration**
    
    **For Web Application:**
    ```bash
-   cd packages/web-app
-   pnpm run dev
+   cp apps/web/env.example apps/web/.env
    ```
-   The web application will be available at `http://localhost:3001/`
    
-   **For LIFF Application:**
+   **For Backend:**
    ```bash
-   cd packages/liff-app
-   pnpm run dev
+   cp apps/backend/env.example apps/backend/.env
    ```
-   The LIFF application will be available at `http://localhost:3000/`
+   
+   Update the `.env` files with your configuration:
+   ```bash
+   # Web App (.env)
+   VITE_REOWN_PROJECT_ID=your_project_id_here
+   VITE_APP_URL=http://localhost:5173
+   VITE_API_BASE_URL=http://localhost:3000
+   
+   # Backend (.env)
+   DATABASE_URL=postgresql://user:pass@localhost:5432/line_yield
+   REDIS_URL=redis://localhost:6379
+   JWT_SECRET=your_jwt_secret
+   ```
+
+5. **Get Reown Project ID**
+   - Visit [Reown Dashboard](https://dashboard.reown.com)
+   - Create a new project
+   - Copy your Project ID to the web app `.env` file
+
+6. **Start development servers**
+   
+   **Start all services:**
+   ```bash
+   pnpm dev
+   ```
+   
+   **Or start individually:**
+   
+   Web Application:
+   ```bash
+   pnpm --filter web dev
+   ```
+   Available at `http://localhost:5173/`
+   
+   Backend API:
+   ```bash
+   pnpm --filter backend dev
+   ```
+   Available at `http://localhost:3000/`
+   
+   Smart Contracts:
+   ```bash
+   pnpm --filter contracts compile
+   ```
 
 ## 📱 Platform Support
 
@@ -223,36 +239,72 @@ const initializeLIFF = async () => {
 
 ## 🏗️ Project Structure
 
-```
-src/
-├── components/           # Reusable UI components
-│   ├── WalletConnectButton.tsx
-│   ├── NetworkBanner.tsx
-│   └── SmartContractInteraction.tsx
-├── hooks/               # Custom React hooks
-│   ├── useWallet.ts
-│   ├── useT.ts
-│   └── useNetworkCheck.ts
-├── pages/               # Page components
-│   ├── LoanPage.tsx
-│   ├── ReferralPage.tsx
-│   └── NFTPage.tsx
-├── providers/           # Context providers
-│   └── AppKitProvider.tsx
-├── utils/               # Utility functions
-│   └── cn.ts
-├── App.tsx              # Main application component
-├── main.tsx             # Application entry point
-└── index.css            # Global styles
+This project follows a modern monorepo structure with clear separation of concerns:
 
-packages/shared/src/components/  # Shared components
-├── LoanTypes.tsx
-├── LoanCreator.tsx
-├── LoanManager.tsx
-├── ReferralPromotion.tsx
-├── NFTCollection.tsx
-└── NFTMinter.tsx
 ```
+kaia-line-yield-insight/
+├── apps/                          # Application packages
+│   ├── web/                      # Web application (main frontend)
+│   │   ├── src/                  # React application source
+│   │   ├── public/               # Static assets
+│   │   ├── package.json          # Web app dependencies
+│   │   └── vite.config.js        # Vite configuration
+│   ├── liff/                     # LINE LIFF application
+│   │   └── package.json          # LIFF app dependencies
+│   └── backend/                  # Backend API service
+│       ├── src/                   # Node.js/Express source
+│       ├── package.json          # Backend dependencies
+│       └── tsconfig.json         # TypeScript config
+├── packages/                     # Shared packages
+│   ├── ui/                       # Shared UI components
+│   ├── utils/                    # Shared utilities
+│   ├── types/                    # Shared TypeScript types
+│   └── config/                   # Shared configurations
+├── contracts/                    # Smart contracts
+│   ├── core/                     # Core contracts (Vault, etc.)
+│   ├── nft/                      # NFT-related contracts
+│   ├── lending/                  # Lending contracts
+│   ├── payments/                 # Payment contracts
+│   ├── security/                 # Security contracts
+│   ├── strategies/              # Strategy contracts
+│   ├── tokens/                   # Token contracts
+│   ├── interfaces/               # Contract interfaces
+│   ├── mocks/                    # Mock contracts for testing
+│   └── package.json              # Contract dependencies
+├── infrastructure/               # Infrastructure and deployment
+│   ├── docker/                   # Docker configurations
+│   ├── kubernetes/               # K8s configurations
+│   ├── terraform/                # Infrastructure as code
+│   └── scripts/                  # Deployment scripts
+├── database/                     # Database related files
+│   ├── schemas/                  # Database schemas
+│   ├── migrations/               # Database migrations
+│   └── seeds/                    # Seed data
+├── docs/                         # Documentation
+│   ├── guides/                   # User and developer guides
+│   ├── api/                      # API documentation
+│   ├── contracts/                # Smart contract documentation
+│   └── deployment/               # Deployment documentation
+├── tools/                        # Development tools
+│   ├── crawlers/                 # Documentation crawlers
+│   ├── monitoring/               # Monitoring configurations
+│   └── testing/                  # Test utilities
+├── examples/                     # Example code and demos
+├── .github/                      # GitHub workflows and templates
+├── .vscode/                      # VS Code settings
+├── package.json                  # Root package.json for workspace
+├── pnpm-workspace.yaml          # PNPM workspace configuration
+└── README.md                     # Main project README
+```
+
+### Key Benefits of This Structure
+
+- **Clear Separation**: Each application and package has its own directory
+- **Shared Code**: Common utilities and components are in packages
+- **Infrastructure as Code**: All deployment configs are organized
+- **Documentation**: All docs are centralized and categorized
+- **Tooling**: Development tools are separated from application code
+- **Monorepo**: Single repository for all related code
 
 ## 🔧 Configuration
 
