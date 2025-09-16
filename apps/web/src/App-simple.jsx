@@ -10,8 +10,7 @@ function AppContent() {
   const [activeTab, setActiveTab] = useState('home');
 
   const navigationItems = [
-    { id: 'home', label: 'Home', icon: '🏠' },
-    { id: 'wallet-demo', label: 'Wallet Demo', icon: '🔗' }
+    { id: 'home', label: 'Home', icon: '🏠' }
   ];
 
   const renderContent = () => {
@@ -39,26 +38,15 @@ function AppContent() {
                     Connect with multiple wallet types including social logins and crypto wallets
                   </p>
                   <Button 
-                    onClick={() => setActiveTab('wallet-demo')}
+                    onClick={connect}
                     className="w-full"
                     variant="outline"
                   >
-                    Try Wallet Demo
+                    Connect Wallet
                   </Button>
                 </CardContent>
               </Card>
             </div>
-          </div>
-        );
-      case 'wallet-demo':
-        return (
-          <div className="text-center">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
-              Wallet Connection Demo
-            </h2>
-            <p className="text-gray-600 mb-8">
-              This is where the wallet connection demo would be
-            </p>
           </div>
         );
       default:

@@ -32,7 +32,6 @@ export const MobileNavigation: React.FC<MobileNavigationProps> = ({
     { id: 'referral', label: 'Referral', icon: <Target className="w-5 h-5" /> },
     { id: 'transactions', label: 'History', icon: <History className="w-5 h-5" /> },
     { id: 'payments', label: 'Payments', icon: <CreditCard className="w-5 h-5" /> },
-    { id: 'wallet-demo', label: 'Wallet', icon: <Wallet className="w-5 h-5" /> }
   ];
 
   const toggleMenu = () => {
@@ -187,7 +186,6 @@ export const DesktopSidebar: React.FC<DesktopSidebarProps> = ({
     { id: 'referral', label: 'Referral', icon: <Target className="w-5 h-5" /> },
     { id: 'transactions', label: 'Transaction History', icon: <History className="w-5 h-5" /> },
     { id: 'payments', label: 'Payments', icon: <CreditCard className="w-5 h-5" /> },
-    { id: 'wallet-demo', label: 'Wallet Demo', icon: <Wallet className="w-5 h-5" /> }
   ];
 
   return (

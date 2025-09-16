@@ -30,7 +30,6 @@ export const SimpleNavigation: React.FC = () => {
     { id: 'transactions', label: 'History', icon: History, path: '/transactions' },
     { id: 'payments', label: 'Payments', icon: CreditCard, path: '/payments' },
     { id: 'trading', label: 'Trading', icon: TrendingUp, path: '/trading' },
-    { id: 'wallet-demo', label: 'Wallet Demo', icon: Wallet, path: '/wallet-demo' },
   ];
 
   const getActiveTab = () => {

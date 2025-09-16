@@ -96,6 +96,8 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    background-color: transparent;
   }
   
   body {
@@ -112,6 +114,27 @@
   h1, h2, h3, h4, h5, h6 {
     font-weight: 600;
     line-height: 1.2;
+  }
+
+  /* Remove yellow highlight from all elements */
+  *:focus {
+    outline: none;
+    background-color: transparent !important;
+  }
+
+  /* Ensure buttons and interactive elements have white background */
+  button, input, textarea, select {
+    background-color: white;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Remove any default browser highlighting */
+  ::selection {
+    background-color: transparent;
+  }
+
+  ::-moz-selection {
+    background-color: transparent;
   }
 }
 
@@ -183,5 +206,25 @@
   
   .touch-manipulation {
     touch-action: manipulation;
+  }
+
+  /* Additional utilities to prevent yellow highlighting */
+  .no-highlight {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  .white-bg {
+    background-color: white !important;
+  }
+
+  .no-focus-highlight:focus {
+    outline: none !important;
+    background-color: white !important;
   }
 }

@@ -6,8 +6,8 @@ import { useToast } from '@/hooks/use-toast';
 
 interface ConnectWalletButtonProps {
   className?: string;
-  variant?: 'default' | 'outline' | 'ghost';
-  size?: 'sm' | 'default' | 'lg';
+  variant?: 'default' | 'outline' | 'ghost' | 'destructive';
+  size?: 'sm' | 'default' | 'lg' | 'icon';
   children?: React.ReactNode;
 }
 
@@ -91,7 +91,7 @@ export const ConnectWalletButton: React.FC<ConnectWalletButtonProps> = ({
         onClose={() => setIsModalOpen(false)}
         onConnect={handleWalletConnect}
         isLoading={isConnecting}
-        error={connectionError}
+        error={connectionError || undefined}
       />
     </>
   );

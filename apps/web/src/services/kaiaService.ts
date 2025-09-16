@@ -5,29 +5,55 @@ export const KAIA_CONFIG = {
   chainId: 8217,
   chainName: 'Kaia Mainnet',
   rpcUrl: import.meta.env.VITE_KAIA_RPC_URL || 'https://public-en.node.kaia.io',
-  blockExplorer: 'https://kaiascan.io',
+  blockExplorer: 'https://scope.kaia.one',
   nativeCurrency: {
     name: 'Kaia',
     symbol: 'KAIA',
     decimals: 18,
   },
+  // Kaia testnet configuration
+  testnet: {
+    chainId: 1001,
+    chainName: 'Kaia Testnet',
+    rpcUrl: 'https://api.baobab.klaytn.net:8651',
+    blockExplorer: 'https://baobab.klaytnscope.com',
+    nativeCurrency: {
+      name: 'Kaia',
+      symbol: 'KAIA',
+      decimals: 18,
+    },
+  }
 };
 
 // Kaia-native USDT configuration
 export const KAIA_USDT_CONFIG = {
-  address: import.meta.env.VITE_KAIA_USDT_CONTRACT_ADDRESS || '0x1234567890123456789012345678901234567890',
-  decimals: 6,
-  symbol: 'USDT',
-  name: 'Tether USD (Kaia)',
+  mainnet: {
+    address: import.meta.env.VITE_KAIA_USDT_CONTRACT_ADDRESS || '0xceE8FAF64bE97bF70b95FE6537A2CFC48a5E7F75',
+    decimals: 6,
+    symbol: 'USDT',
+    name: 'Tether USD (Kaia)',
+  },
+  testnet: {
+    address: '0xceE8FAF64bE97bF70b95FE6537A2CFC48a5E7F75', // Kaia Testnet USDT
+    decimals: 6,
+    symbol: 'USDT',
+    name: 'Tether USD (Kaia Testnet)',
+  }
 };
 
 // Kaia DeFi protocols configuration
 export const KAIA_DEFI_CONFIG = {
-  yieldVault: import.meta.env.VITE_KAIA_YIELD_VAULT_ADDRESS || '0x1234567890123456789012345678901234567890',
-  lendingPool: import.meta.env.VITE_KAIA_LENDING_POOL_ADDRESS || '0x1234567890123456789012345678901234567890',
-  tradingPool: import.meta.env.VITE_KAIA_TRADING_POOL_ADDRESS || '0x1234567890123456789012345678901234567890',
-  rewardsContract: import.meta.env.VITE_KAIA_REWARDS_CONTRACT_ADDRESS || '0x1234567890123456789012345678901234567890',
-  liquidityMining: import.meta.env.VITE_KAIA_LIQUIDITY_MINING_ADDRESS || '0x1234567890123456789012345678901234567890',
+  // Mock DeFi contracts for demonstration (replace with real addresses when deployed)
+  yieldVault: import.meta.env.VITE_KAIA_YIELD_VAULT_ADDRESS || '0x0000000000000000000000000000000000000001',
+  lendingPool: import.meta.env.VITE_KAIA_LENDING_POOL_ADDRESS || '0x0000000000000000000000000000000000000002',
+  tradingPool: import.meta.env.VITE_KAIA_TRADING_POOL_ADDRESS || '0x0000000000000000000000000000000000000003',
+  rewardsContract: import.meta.env.VITE_KAIA_REWARDS_CONTRACT_ADDRESS || '0x0000000000000000000000000000000000000004',
+  liquidityMining: import.meta.env.VITE_KAIA_LIQUIDITY_MINING_ADDRESS || '0x0000000000000000000000000000000000000005',
+  
+  // Kaia ecosystem specific contracts
+  kaiaSwap: '0x0000000000000000000000000000000000000006', // Mock KaiaSwap router
+  kaiaStaking: '0x0000000000000000000000000000000000000007', // Mock Kaia staking contract
+  kaiaGovernance: '0x0000000000000000000000000000000000000008', // Mock governance contract
 };
 
 // Trade-and-Earn configuration
@@ -44,6 +70,7 @@ export class KaiaService {
   private provider: ethers.Provider | null = null;
   private signer: ethers.Signer | null = null;
   private usdtContract: ethers.Contract | null = null;
+  private currentNetwork: 'mainnet' | 'testnet' = 'testnet';
 
   constructor() {
     this.initializeProvider();
@@ -53,10 +80,22 @@ export class KaiaService {
     if (typeof window !== 'undefined' && (window as any).ethereum) {
       this.provider = new ethers.BrowserProvider((window as any).ethereum);
       
-      // Check if we're on Kaia network
-      const network = await this.provider.getNetwork();
-      if (network.chainId !== BigInt(KAIA_CONFIG.chainId)) {
-        await this.switchToKaiaNetwork();
+      try {
+        // Check current network
+        const network = await this.provider.getNetwork();
+        const chainId = Number(network.chainId);
+        
+        if (chainId === KAIA_CONFIG.chainId) {
+          this.currentNetwork = 'mainnet';
+        } else if (chainId === KAIA_CONFIG.testnet.chainId) {
+          this.currentNetwork = 'testnet';
+        } else {
+          // Default to testnet if not on Kaia network
+          await this.switchToKaiaNetwork('testnet');
+        }
+      } catch (error) {
+        console.warn('Failed to detect network, defaulting to testnet:', error);
+        this.currentNetwork = 'testnet';
       }
     }
   }
@@ -89,35 +128,39 @@ export class KaiaService {
     }
   }
 
-  private async switchToKaiaNetwork() {
+  private async switchToKaiaNetwork(network: 'mainnet' | 'testnet' = 'testnet') {
     try {
+      const config = network === 'mainnet' ? KAIA_CONFIG : KAIA_CONFIG.testnet;
       await (window as any).ethereum.request({
         method: 'wallet_switchEthereumChain',
-        params: [{ chainId: `0x${KAIA_CONFIG.chainId.toString(16)}` }],
+        params: [{ chainId: `0x${config.chainId.toString(16)}` }],
       });
+      this.currentNetwork = network;
     } catch (error: any) {
       // If the network doesn't exist, add it
       if (error.code === 4902) {
-        await this.addKaiaNetwork();
+        await this.addKaiaNetwork(network);
       } else {
         throw error;
       }
     }
   }
 
-  private async addKaiaNetwork() {
+  private async addKaiaNetwork(network: 'mainnet' | 'testnet' = 'testnet') {
+    const config = network === 'mainnet' ? KAIA_CONFIG : KAIA_CONFIG.testnet;
     await (window as any).ethereum.request({
       method: 'wallet_addEthereumChain',
       params: [
         {
-          chainId: `0x${KAIA_CONFIG.chainId.toString(16)}`,
-          chainName: KAIA_CONFIG.chainName,
-          rpcUrls: [KAIA_CONFIG.rpcUrl],
-          blockExplorerUrls: [KAIA_CONFIG.blockExplorer],
-          nativeCurrency: KAIA_CONFIG.nativeCurrency,
+          chainId: `0x${config.chainId.toString(16)}`,
+          chainName: config.chainName,
+          rpcUrls: [config.rpcUrl],
+          blockExplorerUrls: [config.blockExplorer],
+          nativeCurrency: config.nativeCurrency,
         },
       ],
     });
+    this.currentNetwork = network;
   }
 
   private initializeUSDTContract() {
@@ -136,8 +179,12 @@ export class KaiaService {
       'event Approval(address indexed owner, address indexed spender, uint256 value)',
     ];
 
+    const usdtConfig = this.currentNetwork === 'mainnet' 
+      ? KAIA_USDT_CONFIG.mainnet 
+      : KAIA_USDT_CONFIG.testnet;
+
     this.usdtContract = new ethers.Contract(
-      KAIA_USDT_CONFIG.address,
+      usdtConfig.address,
       erc20Abi,
       this.signer
     );
@@ -151,7 +198,12 @@ export class KaiaService {
 
     const targetAddress = address || (this.signer ? await this.signer.getAddress() : '');
     const balance = await this.usdtContract.balanceOf(targetAddress);
-    return ethers.formatUnits(balance, KAIA_USDT_CONFIG.decimals);
+    
+    const usdtConfig = this.currentNetwork === 'mainnet' 
+      ? KAIA_USDT_CONFIG.mainnet 
+      : KAIA_USDT_CONFIG.testnet;
+    
+    return ethers.formatUnits(balance, usdtConfig.decimals);
   }
 
   async transferUSDT(to: string, amount: string): Promise<ethers.TransactionResponse> {
@@ -159,7 +211,11 @@ export class KaiaService {
       throw new Error('Contract or signer not initialized');
     }
 
-    const amountWei = ethers.parseUnits(amount, KAIA_USDT_CONFIG.decimals);
+    const usdtConfig = this.currentNetwork === 'mainnet' 
+      ? KAIA_USDT_CONFIG.mainnet 
+      : KAIA_USDT_CONFIG.testnet;
+
+    const amountWei = ethers.parseUnits(amount, usdtConfig.decimals);
     const tx = await this.usdtContract.transfer(to, amountWei);
     return tx;
   }
@@ -169,7 +225,11 @@ export class KaiaService {
       throw new Error('Contract or signer not initialized');
     }
 
-    const amountWei = ethers.parseUnits(amount, KAIA_USDT_CONFIG.decimals);
+    const usdtConfig = this.currentNetwork === 'mainnet' 
+      ? KAIA_USDT_CONFIG.mainnet 
+      : KAIA_USDT_CONFIG.testnet;
+
+    const amountWei = ethers.parseUnits(amount, usdtConfig.decimals);
     const tx = await this.usdtContract.approve(spender, amountWei);
     return tx;
   }
@@ -469,14 +529,33 @@ export class KaiaService {
     }
   }
 
+  // Network management
+  async switchNetwork(network: 'mainnet' | 'testnet'): Promise<boolean> {
+    try {
+      await this.switchToKaiaNetwork(network);
+      // Reinitialize USDT contract with new network
+      this.initializeUSDTContract();
+      return true;
+    } catch (error) {
+      console.error('Failed to switch network:', error);
+      return false;
+    }
+  }
+
+  getCurrentNetwork(): 'mainnet' | 'testnet' {
+    return this.currentNetwork;
+  }
+
   // Kaia ecosystem specific functions
   async getKaiaNetworkInfo() {
+    const config = this.currentNetwork === 'mainnet' ? KAIA_CONFIG : KAIA_CONFIG.testnet;
     return {
-      chainId: KAIA_CONFIG.chainId,
-      chainName: KAIA_CONFIG.chainName,
-      rpcUrl: KAIA_CONFIG.rpcUrl,
-      blockExplorer: KAIA_CONFIG.blockExplorer,
-      nativeCurrency: KAIA_CONFIG.nativeCurrency,
+      chainId: config.chainId,
+      chainName: config.chainName,
+      rpcUrl: config.rpcUrl,
+      blockExplorer: config.blockExplorer,
+      nativeCurrency: config.nativeCurrency,
+      network: this.currentNetwork,
     };
   }
 

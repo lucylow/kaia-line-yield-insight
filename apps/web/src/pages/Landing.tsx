@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { ArrowRight, LineChart, ArrowUp, PlayCircle, Menu, X } from 'lucide-react';
+import { ArrowRight, LineChart, ArrowUp, PlayCircle, Menu, X, Home, TrendingUp, BarChart, ShoppingBag, Users, History, CreditCard, Wallet } from 'lucide-react';
 import { WalletConnect } from '../shared/components/WalletConnect';
+import { Link } from 'react-router-dom';
 
 interface LandingProps {
   onNavigate?: (tab: string) => void;
@@ -39,10 +40,43 @@ const Landing: React.FC<LandingProps> = ({ onNavigate }) => {
             </div>
             
             {/* Desktop Navigation */}
-            <nav className="hidden lg:flex gap-6 xl:gap-8">
-              <button className="text-gray-700 font-medium hover:text-green-600 transition-colors">Home</button>
-              <a href="#features" className="text-gray-700 font-medium hover:text-green-600 transition-colors">Features</a>
-              <a href="#how-it-works" className="text-gray-700 font-medium hover:text-green-600 transition-colors">How It Works</a>
+            <nav className="hidden lg:flex gap-4 xl:gap-6">
+              <Link to="/" className="flex items-center gap-1 text-gray-700 font-medium hover:text-green-600 transition-colors px-3 py-2 rounded-lg hover:bg-green-50">
+                <Home className="w-4 h-4" />
+                Home
+              </Link>
+              <Link to="/dashboard" className="flex items-center gap-1 text-gray-700 font-medium hover:text-green-600 transition-colors px-3 py-2 rounded-lg hover:bg-green-50">
+                <TrendingUp className="w-4 h-4" />
+                Dashboard
+              </Link>
+              <Link to="/analytics" className="flex items-center gap-1 text-gray-700 font-medium hover:text-green-600 transition-colors px-3 py-2 rounded-lg hover:bg-green-50">
+                <BarChart className="w-4 h-4" />
+                Analytics
+              </Link>
+              <Link to="/strategies" className="flex items-center gap-1 text-gray-700 font-medium hover:text-green-600 transition-colors px-3 py-2 rounded-lg hover:bg-green-50">
+                <LineChart className="w-4 h-4" />
+                Strategies
+              </Link>
+              <Link to="/nft" className="flex items-center gap-1 text-gray-700 font-medium hover:text-green-600 transition-colors px-3 py-2 rounded-lg hover:bg-green-50">
+                <ShoppingBag className="w-4 h-4" />
+                NFT Market
+              </Link>
+              <Link to="/referral" className="flex items-center gap-1 text-gray-700 font-medium hover:text-green-600 transition-colors px-3 py-2 rounded-lg hover:bg-green-50">
+                <Users className="w-4 h-4" />
+                Referral
+              </Link>
+              <Link to="/transactions" className="flex items-center gap-1 text-gray-700 font-medium hover:text-green-600 transition-colors px-3 py-2 rounded-lg hover:bg-green-50">
+                <History className="w-4 h-4" />
+                History
+              </Link>
+              <Link to="/payments" className="flex items-center gap-1 text-gray-700 font-medium hover:text-green-600 transition-colors px-3 py-2 rounded-lg hover:bg-green-50">
+                <CreditCard className="w-4 h-4" />
+                Payments
+              </Link>
+              <a href="#features" className="flex items-center gap-1 text-gray-700 font-medium hover:text-green-600 transition-colors px-3 py-2 rounded-lg hover:bg-green-50">
+                <span className="w-4 h-4 text-center">✨</span>
+                Features
+              </a>
             </nav>
             
             {/* Desktop Actions */}
@@ -69,13 +103,44 @@ const Landing: React.FC<LandingProps> = ({ onNavigate }) => {
           {/* Mobile Navigation Menu */}
           {isMobileMenuOpen && (
             <div className="md:hidden mt-4 py-4 border-t border-gray-200 bg-white/95 backdrop-blur-md rounded-lg shadow-lg">
-              <nav className="flex flex-col space-y-4">
-                <button className="text-gray-700 font-medium hover:text-green-600 transition-colors px-4 py-2 rounded-lg hover:bg-green-50 text-left">
+              <nav className="flex flex-col space-y-2">
+                <Link to="/" className="flex items-center gap-2 text-gray-700 font-medium hover:text-green-600 transition-colors px-4 py-3 rounded-lg hover:bg-green-50">
+                  <Home className="w-4 h-4" />
                   Home
-                </button>
-                <a href="#features" className="text-gray-700 font-medium hover:text-green-600 transition-colors px-4 py-2 rounded-lg hover:bg-green-50">
+                </Link>
+                <Link to="/dashboard" className="flex items-center gap-2 text-gray-700 font-medium hover:text-green-600 transition-colors px-4 py-3 rounded-lg hover:bg-green-50">
+                  <TrendingUp className="w-4 h-4" />
+                  Dashboard
+                </Link>
+                <Link to="/analytics" className="flex items-center gap-2 text-gray-700 font-medium hover:text-green-600 transition-colors px-4 py-3 rounded-lg hover:bg-green-50">
+                  <BarChart className="w-4 h-4" />
+                  Analytics
+                </Link>
+                <Link to="/strategies" className="flex items-center gap-2 text-gray-700 font-medium hover:text-green-600 transition-colors px-4 py-3 rounded-lg hover:bg-green-50">
+                  <LineChart className="w-4 h-4" />
+                  Yield Strategies
+                </Link>
+                <Link to="/nft" className="flex items-center gap-2 text-gray-700 font-medium hover:text-green-600 transition-colors px-4 py-3 rounded-lg hover:bg-green-50">
+                  <ShoppingBag className="w-4 h-4" />
+                  NFT Marketplace
+                </Link>
+                <Link to="/referral" className="flex items-center gap-2 text-gray-700 font-medium hover:text-green-600 transition-colors px-4 py-3 rounded-lg hover:bg-green-50">
+                  <Users className="w-4 h-4" />
+                  Referral System
+                </Link>
+                <Link to="/transactions" className="flex items-center gap-2 text-gray-700 font-medium hover:text-green-600 transition-colors px-4 py-3 rounded-lg hover:bg-green-50">
+                  <History className="w-4 h-4" />
+                  Transaction History
+                </Link>
+                <Link to="/payments" className="flex items-center gap-2 text-gray-700 font-medium hover:text-green-600 transition-colors px-4 py-3 rounded-lg hover:bg-green-50">
+                  <CreditCard className="w-4 h-4" />
+                  Payments
+                </Link>
+                <a href="#features" className="flex items-center gap-2 text-gray-700 font-medium hover:text-green-600 transition-colors px-4 py-3 rounded-lg hover:bg-green-50">
+                  <span className="w-4 h-4 text-center">✨</span>
                   Features
                 </a>
+                
                 <div className="px-4 pt-4 border-t border-gray-200 space-y-3">
                   <button className="w-full border-2 border-green-600 text-green-600 hover:bg-green-600 hover:text-white transition-all duration-300 px-4 py-2 rounded-lg">
                     Sign In
@@ -125,6 +190,33 @@ const Landing: React.FC<LandingProps> = ({ onNavigate }) => {
                   <PlayCircle className="w-4 h-4 md:w-5 md:h-5 mr-2" />
                   Watch Demo
                 </button>
+              </div>
+              
+              {/* Platform Selection */}
+              <div className="mb-6 md:mb-10">
+                <p className="text-sm md:text-base text-gray-600 mb-4 text-center lg:text-left">Choose your platform:</p>
+                <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center lg:justify-start">
+                  <a 
+                    href="https://liff.line.me/2008113148-LaMorb83"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="h-12 md:h-14 px-6 md:px-8 text-base md:text-lg font-semibold bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 rounded-lg flex items-center justify-center"
+                  >
+                    <span className="text-lg md:text-xl mr-2">📱</span>
+                    LINE Version
+                    <ArrowRight className="w-4 h-4 md:w-5 md:h-5 ml-2" />
+                  </a>
+                  <a 
+                    href="https://line-yield.lovable.app/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="h-12 md:h-14 px-6 md:px-8 text-base md:text-lg font-semibold bg-gradient-to-r from-purple-500 to-purple-600 text-white hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 rounded-lg flex items-center justify-center"
+                  >
+                    <span className="text-lg md:text-xl mr-2">🌐</span>
+                    WEB Version
+                    <ArrowRight className="w-4 h-4 md:w-5 md:h-5 ml-2" />
+                  </a>
+                </div>
               </div>
               
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-5 max-w-sm md:max-w-md mx-auto lg:mx-0">
@@ -230,14 +322,42 @@ const Landing: React.FC<LandingProps> = ({ onNavigate }) => {
           <p className="text-xl text-gray-600 mb-8">
             Join LINE Yield today and start earning passive income with DeFi strategies.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button 
-              onClick={handleGetStarted}
-              className="text-lg px-8 py-4 bg-gradient-to-r from-emerald-400 to-emerald-500 text-white hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 rounded-lg flex items-center justify-center"
-            >
-              Start Earning Now
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </button>
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <button 
+                onClick={handleGetStarted}
+                className="text-lg px-8 py-4 bg-gradient-to-r from-emerald-400 to-emerald-500 text-white hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 rounded-lg flex items-center justify-center"
+              >
+                Start Earning Now
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </button>
+            </div>
+            
+            <div className="pt-4 border-t border-gray-200">
+              <p className="text-sm text-gray-600 mb-4">Or choose your preferred platform:</p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <a 
+                  href="https://liff.line.me/2008113148-LaMorb83"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-lg px-8 py-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 rounded-lg flex items-center justify-center"
+                >
+                  <span className="text-xl mr-2">📱</span>
+                  LINE Version
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </a>
+                <a 
+                  href="https://line-yield.lovable.app/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-lg px-8 py-4 bg-gradient-to-r from-purple-500 to-purple-600 text-white hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 rounded-lg flex items-center justify-center"
+                >
+                  <span className="text-xl mr-2">🌐</span>
+                  WEB Version
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </section>
