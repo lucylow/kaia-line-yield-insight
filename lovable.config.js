@@ -9,18 +9,9 @@ export default {
     app: "./apps/web/src/App-minimal.tsx"
   },
   
-  // Component tags for Lovable
+  // Component tags for Lovable - minimal configuration
   components: {
-    main: "./apps/web/src/App-minimal.tsx",
-    dashboard: "./apps/web/src/components/Dashboard.tsx",
-    yieldStrategies: "./apps/web/src/components/YieldStrategies.tsx",
-    nftMarketplace: "./apps/web/src/components/NFTMarketplace.tsx",
-    referralSystem: "./apps/web/src/components/ReferralSystem.tsx",
-    transactionHistory: "./apps/web/src/components/TransactionHistory.tsx",
-    walletProvider: "./apps/web/src/providers/WalletProvider.tsx",
-    button: "./apps/web/src/components/ui/button.tsx",
-    card: "./apps/web/src/components/ui/card.tsx",
-    errorBoundary: "./apps/web/src/components/ErrorBoundary.tsx"
+    main: "./apps/web/src/App-minimal.tsx"
   },
   
   // Build configuration
@@ -37,14 +28,8 @@ export default {
     host: "::"
   },
   
-  // Features
+  // Features - minimal for initial deployment
   features: {
-    wallet: true,
-    yieldFarming: true,
-    nftMarketplace: true,
-    referralSystem: true,
-    transactionHistory: true,
-    responsive: true,
-    errorHandling: true
+    responsive: true
   }
 };
