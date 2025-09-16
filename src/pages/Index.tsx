@@ -9,7 +9,7 @@ import { TransactionHistory } from '../components/TransactionHistory';
 import { NotificationsPanel } from '../components/NotificationsPanel';
 import { LoadingCard, LoadingSpinner } from '../components/LoadingSpinner';
 import { AuthModal } from '../components/AuthModal';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import { VAULT_ADDRESS } from '../utils/constants';
 import { ArrowUpRight, ArrowDownLeft, Wallet, TrendingUp, DollarSign, Percent, RefreshCw } from 'lucide-react';
 

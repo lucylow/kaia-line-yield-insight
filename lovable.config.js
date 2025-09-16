@@ -18,8 +18,8 @@ export default {
     referralSystem: "./src/components/ReferralSystem.tsx",
     transactionHistory: "./src/components/TransactionHistory.tsx",
     walletProvider: "./src/providers/WalletProvider.tsx",
-    button: "./src/components/ui/button.tsx",
-    card: "./src/components/ui/card.tsx",
+    button: "./src/components/simple/Button.tsx",
+    card: "./src/components/simple/Card.tsx",
     errorBoundary: "./src/components/ErrorBoundary.tsx"
   },
   

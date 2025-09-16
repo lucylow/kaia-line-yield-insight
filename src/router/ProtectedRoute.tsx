@@ -2,8 +2,8 @@ import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useWallet } from '../providers/SimpleWalletProvider';
 import { LoadingSpinner } from '../components/ui/LoadingSpinner';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
-import { Button } from '../components/ui/Button';
+import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
+import { Button } from '../components/ui/button';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;

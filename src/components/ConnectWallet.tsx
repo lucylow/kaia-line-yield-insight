@@ -1,6 +1,6 @@
 import React from 'react';
 import { useWallet } from '../providers/SimpleWalletProvider';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import { KLAYTN_TESTNET } from '../utils/constants';
 import { Wallet, Copy, ExternalLink } from 'lucide-react';
 import { truncateAddress } from '../utils/formatters';

@@ -13,8 +13,8 @@ import {
   Download,
   RefreshCw
 } from 'lucide-react';
-import { Card, CardHeader, CardContent, CardTitle } from './ui/Card';
-import { Button } from './ui/Button';
+import { Card, CardHeader, CardContent, CardTitle } from './ui/card';
+import { Button } from './ui/button';
 
 interface AnalyticsData {
   portfolio: {

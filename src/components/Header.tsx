@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { LineChart, Wallet, Settings, User, QrCode } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import { useWallet } from '@/hooks/useWallet';
 import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
 import { MobileNavigation } from './MobileNavigation';

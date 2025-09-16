@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Sheet, SheetContent, SheetTrigger } from './ui/sheet';
-import { Button } from './ui/Button';
+import { Button } from './ui/button';
 import { MenuIcon, X } from 'lucide-react';
 import { cn } from '../lib/utils';
 import WalletConnectButton from './WalletConnectButton';

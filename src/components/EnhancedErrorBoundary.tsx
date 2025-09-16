@@ -9,8 +9,8 @@ import {
   XCircle,
   Info
 } from 'lucide-react';
-import { Button } from './ui/Button';
-import { Card, CardHeader, CardContent, CardTitle } from './ui/Card';
+import { Button } from './ui/button';
+import { Card, CardHeader, CardContent, CardTitle } from './ui/card';
 
 interface Props {
   children: ReactNode;

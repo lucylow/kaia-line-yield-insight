@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
+import { useReadContract, useWriteContract, useWaitForTransaction } from 'wagmi';
 import { useWallet } from '../hooks/useWallet';
 import { cn } from '../lib/utils';
 

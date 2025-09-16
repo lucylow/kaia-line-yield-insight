@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { WalletProvider, useWallet } from './providers/WalletProvider';
-import { Button } from './components/ui/Button';
-import { Card, CardHeader, CardContent, CardTitle } from './components/ui/Card';
+import { Button } from './components/ui/button';
+import { Card, CardHeader, CardContent, CardTitle } from './components/ui/card';
 import { Dashboard } from './components/Dashboard';
 import { YieldStrategies } from './components/YieldStrategies';
 import { NFTMarketplace } from './components/NFTMarketplace';

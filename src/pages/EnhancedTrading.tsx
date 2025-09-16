@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { EnhancedTradingInterface } from '../components/EnhancedTradingInterface';
 import { RealTimeNotifications } from '../components/RealTimeNotifications';
-import { Card, CardHeader, CardContent, CardTitle } from '../components/ui/Card';
-import { Button } from '../components/ui/Button';
+import { Card, CardHeader, CardContent, CardTitle } from '../components/ui/card';
+import { Button } from '../components/ui/button';
 import { 
   TrendingUp, 
   TrendingDown, 

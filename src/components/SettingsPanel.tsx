@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Settings, Bell, Eye, Globe, Shield, Save, X } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 

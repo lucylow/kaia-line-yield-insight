@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, CardHeader, CardContent, CardTitle } from './ui/Card';
+import { Card, CardHeader, CardContent, CardTitle } from './ui/card';
 import { AnimatedCounter } from './AnimatedCounter';
 import { ProgressRing } from './ProgressRing';
 import { useRealTimeMarketData, useRealTimeYieldData } from '../hooks/useRealTimeData';

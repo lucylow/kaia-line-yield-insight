@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import { useGaslessTransaction, createDepositSignature, createWithdrawSignature } from '@/hooks/useGaslessTransaction';
 import { useWallet } from '@/hooks/useWallet';
 import { ArrowDown, ArrowUp, Zap, Loader2 } from 'lucide-react';

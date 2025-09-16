@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useWallet } from '../providers/SimpleWalletProvider';
 import { useYieldData } from '../hooks/useYieldData';
-import { Card, CardHeader, CardContent, CardTitle } from './ui/Card';
-import { Button } from './ui/Button';
+import { Card, CardHeader, CardContent, CardTitle } from './ui/card';
+import { Button } from './ui/button';
 import { AnimatedCounter } from './AnimatedCounter';
 import { ProgressRing } from './ProgressRing';
 import { LoadingSpinner } from './LoadingSpinner';

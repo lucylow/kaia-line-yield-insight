@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from './ui/Button';
+import { Button } from './ui/button';
 import { Wallet, Copy, ExternalLink, LogOut } from 'lucide-react';
 import { useWallet } from '../providers/SimpleWalletProvider';
 import { truncateAddress } from '../utils/formatters';

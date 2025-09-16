@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Bell, X, Check, Trash2, ExternalLink, Clock } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useNotifications } from '@/hooks/useNotifications';
 

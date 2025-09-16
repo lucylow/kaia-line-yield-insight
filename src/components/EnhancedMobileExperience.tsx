@@ -12,7 +12,6 @@ import {
   Filter,
   ChevronDown,
   ChevronUp,
-  Touch,
   Smartphone,
   Wifi,
   Battery

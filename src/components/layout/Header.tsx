@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Button } from '../ui/Button';
-import { WalletConnectButton } from '../WalletConnectButton';
+import { Button } from '../ui/button';
+import WalletConnectButton from '../WalletConnectButton';
 import { NetworkBanner } from '../NetworkBanner';
 import { 
   Menu, 
