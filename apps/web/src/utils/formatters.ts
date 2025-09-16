@@ -1,5 +1,3 @@
-import { ethers } from 'ethers';
-
 export const formatCurrency = (value: number, decimals: number = 2): string => {
   return new Intl.NumberFormat('en-US', {
     minimumFractionDigits: decimals,
@@ -14,9 +12,9 @@ export const formatNumber = (value: number, decimals: number = 2): string => {
   }).format(value);
 };
 
-export const formatBalance = (balance: ethers.BigNumberish, decimals: number = 4): string => {
-  const formatted = ethers.formatUnits(balance, 6); // USDT has 6 decimals
-  return formatCurrency(parseFloat(formatted), decimals);
+export const formatBalance = (balance: string | number, decimals: number = 4): string => {
+  const numericBalance = typeof balance === 'string' ? parseFloat(balance) : balance;
+  return formatCurrency(numericBalance, decimals);
 };
 
 export const truncateAddress = (address: string, start: number = 6, end: number = 4): string => {
