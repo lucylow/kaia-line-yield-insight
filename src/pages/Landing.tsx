@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ArrowRight, LineChart, ArrowUp, PlayCircle, Menu, X } from 'lucide-react';
+import { WalletConnect } from '../shared/components/WalletConnect';
 
 interface LandingProps {
   onNavigate?: (tab: string) => void;
@@ -49,9 +50,7 @@ const Landing: React.FC<LandingProps> = ({ onNavigate }) => {
               <button className="border-2 border-green-600 text-green-600 hover:bg-green-600 hover:text-white transition-all duration-300 px-4 py-2 rounded-lg">
                 Sign In
               </button>
-              <button className="bg-gradient-to-r from-emerald-400 to-emerald-500 text-white hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 px-4 py-2 rounded-lg">
-                Connect Wallet
-              </button>
+              <WalletConnect />
             </div>
 
             {/* Mobile Menu Button */}
@@ -81,9 +80,9 @@ const Landing: React.FC<LandingProps> = ({ onNavigate }) => {
                   <button className="w-full border-2 border-green-600 text-green-600 hover:bg-green-600 hover:text-white transition-all duration-300 px-4 py-2 rounded-lg">
                     Sign In
                   </button>
-                  <button className="w-full bg-gradient-to-r from-emerald-400 to-emerald-500 text-white hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 px-4 py-2 rounded-lg">
-                    Connect Wallet
-                  </button>
+                  <div className="w-full">
+                    <WalletConnect />
+                  </div>
                 </div>
               </nav>
             </div>

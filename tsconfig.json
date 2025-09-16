@@ -18,13 +18,14 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
-      "@shared/*": ["packages/shared/src/*"]
+      "@shared/*": ["src/shared/*"]
     }
   },
   "include": [
     "src/**/*.ts",
     "src/**/*.tsx",
-    "src/**/*.d.ts"
+    "src/**/*.d.ts",
+    "src/shared/**/*"
   ],
   "exclude": [
     "node_modules",
