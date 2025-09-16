@@ -7,7 +7,7 @@ import { LoanPage } from './pages/LoanPage';
 import { ReferralPage } from './pages/ReferralPage';
 import { NFTPage } from './pages/NFTPage';
 import { SmartContractInteraction } from './components/SmartContractInteraction';
-import { cn } from './utils/cn';
+import { cn } from './lib/utils';
 
 // Example USDT contract address on Kaia (replace with actual address)
 const USDT_CONTRACT_ADDRESS = '0x...'; // Replace with actual USDT contract address
