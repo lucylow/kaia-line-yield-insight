@@ -2,8 +2,10 @@ import { renderHook, act } from '@testing-library/react';
 import { useWebSocket } from '../useWebSocket';
 
 // Mock the toast hook
-jest.mock('../useToast', () => ({
-  toast: jest.fn(),
+jest.mock('../../hooks/use-toast', () => ({
+  useToast: () => ({
+    toast: jest.fn(),
+  }),
 }));
 
 describe('useWebSocket', () => {
