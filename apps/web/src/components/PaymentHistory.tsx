@@ -12,7 +12,7 @@ interface PaymentHistoryProps {
 }
 
 export const PaymentHistory: React.FC<PaymentHistoryProps> = ({ className = '' }) => {
-  const { wallet } = useWallet();
+  const wallet = useWallet();
   const {
     isLoading,
     error,
@@ -156,7 +156,7 @@ export const PaymentHistory: React.FC<PaymentHistoryProps> = ({ className = '' }
             <Alert variant="destructive" className="mb-4">
               <AlertDescription>
                 {error}
-                <Button onClick={clearError} variant="link" className="ml-2 p-0 h-auto">
+                <Button onClick={clearError} variant="ghost" className="ml-2 p-0 h-auto">
                   Clear
                 </Button>
               </AlertDescription>

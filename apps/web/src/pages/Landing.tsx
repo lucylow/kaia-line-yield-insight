@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { ArrowRight, LineChart, ArrowUp, PlayCircle, Menu, X, Home, TrendingUp, BarChart, ShoppingBag, Users, History, CreditCard, Wallet } from 'lucide-react';
 import { WalletConnect } from '../shared/components/WalletConnect';
 import { Link } from 'react-router-dom';
+import { useTranslation } from '../hooks/useTranslation';
+import LanguageSwitcher from '../components/LanguageSwitcher';
 
 interface LandingProps {
   onNavigate?: (tab: string) => void;
@@ -10,6 +12,7 @@ interface LandingProps {
 const Landing: React.FC<LandingProps> = ({ onNavigate }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -43,23 +46,23 @@ const Landing: React.FC<LandingProps> = ({ onNavigate }) => {
             <nav className="hidden lg:flex gap-4 xl:gap-6">
               <Link to="/" className="flex items-center gap-1 text-gray-700 font-medium hover:text-green-600 transition-colors px-3 py-2 rounded-lg hover:bg-green-50">
                 <Home className="w-4 h-4" />
-                Home
+                {t('navigation.home')}
               </Link>
               <Link to="/dashboard" className="flex items-center gap-1 text-gray-700 font-medium hover:text-green-600 transition-colors px-3 py-2 rounded-lg hover:bg-green-50">
                 <TrendingUp className="w-4 h-4" />
-                Dashboard
+                {t('navigation.dashboard')}
               </Link>
               <Link to="/analytics" className="flex items-center gap-1 text-gray-700 font-medium hover:text-green-600 transition-colors px-3 py-2 rounded-lg hover:bg-green-50">
                 <BarChart className="w-4 h-4" />
-                Analytics
+                {t('navigation.analytics')}
               </Link>
               <Link to="/strategies" className="flex items-center gap-1 text-gray-700 font-medium hover:text-green-600 transition-colors px-3 py-2 rounded-lg hover:bg-green-50">
                 <LineChart className="w-4 h-4" />
-                Strategies
+                {t('navigation.yield')}
               </Link>
               <Link to="/nft" className="flex items-center gap-1 text-gray-700 font-medium hover:text-green-600 transition-colors px-3 py-2 rounded-lg hover:bg-green-50">
                 <ShoppingBag className="w-4 h-4" />
-                NFT Market
+                {t('navigation.nft')}
               </Link>
               <Link to="/referral" className="flex items-center gap-1 text-gray-700 font-medium hover:text-green-600 transition-colors px-3 py-2 rounded-lg hover:bg-green-50">
                 <Users className="w-4 h-4" />
@@ -81,8 +84,9 @@ const Landing: React.FC<LandingProps> = ({ onNavigate }) => {
             
             {/* Desktop Actions */}
             <div className="hidden md:flex gap-2 lg:gap-4 items-center">
+              <LanguageSwitcher />
               <button className="border-2 border-green-600 text-green-600 hover:bg-green-600 hover:text-white transition-all duration-300 px-4 py-2 rounded-lg">
-                Sign In
+                {t('common.signIn')}
               </button>
               <WalletConnect />
             </div>
@@ -142,8 +146,9 @@ const Landing: React.FC<LandingProps> = ({ onNavigate }) => {
                 </a>
                 
                 <div className="px-4 pt-4 border-t border-gray-200 space-y-3">
+                  <LanguageSwitcher variant="buttons" className="w-full" />
                   <button className="w-full border-2 border-green-600 text-green-600 hover:bg-green-600 hover:text-white transition-all duration-300 px-4 py-2 rounded-lg">
-                    Sign In
+                    {t('common.signIn')}
                   </button>
                   <div className="w-full">
                     <WalletConnect />
@@ -167,15 +172,14 @@ const Landing: React.FC<LandingProps> = ({ onNavigate }) => {
               
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4 md:mb-6 leading-tight">
                 <span className="bg-gradient-to-r from-green-800 via-green-600 to-emerald-500 bg-clip-text text-transparent">
-                  Earn Automated Yield on Your USDT
+                  {t('landing.title')}
                 </span>
                 <br />
-                <span className="text-gray-800">While You Chat</span>
+                <span className="text-gray-800">{t('landing.subtitle')}</span>
               </h1>
               
               <p className="text-base md:text-lg lg:text-xl text-gray-600 mb-6 md:mb-10 leading-relaxed max-w-2xl mx-auto lg:mx-0">
-                LINE Yield lets you maximize your stablecoin earnings through automated DeFi strategies, 
-                directly within LINE Messenger. Set it and forget it.
+                {t('landing.description')}
               </p>
               
               <div className="flex flex-col sm:flex-row gap-3 md:gap-4 mb-6 md:mb-10 justify-center lg:justify-start">
@@ -183,12 +187,12 @@ const Landing: React.FC<LandingProps> = ({ onNavigate }) => {
                   onClick={handleGetStarted}
                   className="h-12 md:h-14 px-6 md:px-8 text-base md:text-lg font-semibold bg-gradient-to-r from-emerald-400 to-emerald-500 text-white hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 rounded-lg flex items-center justify-center"
                 >
-                  Start Earning Now
+                  {t('landing.getStarted')}
                   <ArrowRight className="w-4 h-4 md:w-5 md:h-5 ml-2" />
                 </button>
                 <button className="h-12 md:h-14 px-6 md:px-8 text-base md:text-lg font-semibold border-2 border-green-600 text-green-600 hover:bg-green-600 hover:text-white transition-all duration-300 hover:shadow-lg rounded-lg flex items-center justify-center">
                   <PlayCircle className="w-4 h-4 md:w-5 md:h-5 mr-2" />
-                  Watch Demo
+                  {t('landing.learnMore')}
                 </button>
               </div>
               

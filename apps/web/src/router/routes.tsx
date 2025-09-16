@@ -18,6 +18,7 @@ const Trading = lazy(() => import('../pages/Trading'));
 const Profile = lazy(() => import('../pages/Profile'));
 const Settings = lazy(() => import('../pages/Settings'));
 const NotFound = lazy(() => import('../pages/NotFound'));
+const I18nTest = lazy(() => import('../pages/I18nTest'));
 
 // Nested routes for complex pages
 const YieldStrategiesRoutes = lazy(() => import('../pages/YieldStrategies/routes').then(m => ({ default: m.YieldStrategiesRoutes })));
@@ -31,6 +32,7 @@ export const AppRoutes: React.FC = () => {
         {/* Public Routes */}
         <Route path="/" element={<Landing />} />
         <Route path="/landing" element={<Landing />} />
+        <Route path="/i18n-test" element={<I18nTest />} />
         
         {/* Direct Access Routes - No Wallet Gate */}
         <Route path="/dashboard" element={<AppLayout />}>

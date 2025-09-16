@@ -94,7 +94,7 @@ export const ReferralSystem: React.FC = () => {
     switch (tier) {
       case 'bronze': return 'text-orange-600 bg-orange-100';
       case 'silver': return 'text-gray-600 bg-gray-100';
-      case 'gold': return 'text-yellow-600 bg-yellow-100';
+      case 'gold': return 'text-yellow-600 bg-white';
       case 'platinum': return 'text-purple-600 bg-purple-100';
       default: return 'text-gray-600 bg-gray-100';
     }
@@ -103,7 +103,7 @@ export const ReferralSystem: React.FC = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'active': return 'text-green-600 bg-green-100';
-      case 'pending': return 'text-yellow-600 bg-yellow-100';
+      case 'pending': return 'text-yellow-600 bg-white';
       case 'inactive': return 'text-red-600 bg-red-100';
       default: return 'text-gray-600 bg-gray-100';
     }
@@ -144,7 +144,7 @@ export const ReferralSystem: React.FC = () => {
       <div className="bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl p-6 border border-emerald-200">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-4">
-            <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
+            <div className="w-16 h-16 bg-gradient-to-br from-white to-orange-500 rounded-full flex items-center justify-center">
               <Crown className="w-8 h-8 text-white" />
             </div>
             <div>
@@ -154,7 +154,7 @@ export const ReferralSystem: React.FC = () => {
           </div>
           <div className="text-right">
             <div className="flex items-center space-x-2 mb-2">
-              <Trophy className="w-5 h-5 text-yellow-500" />
+              <Trophy className="w-5 h-5 text-orange-500" />
               <span className="text-lg font-bold text-gray-900">{referralData.totalPoints} Points</span>
             </div>
             <div className="flex items-center space-x-2">
@@ -219,7 +219,7 @@ export const ReferralSystem: React.FC = () => {
         </Card>
         <Card>
           <CardContent className="p-6 text-center">
-            <p className="text-2xl font-bold text-yellow-600">${referralData.pendingEarnings}</p>
+            <p className="text-2xl font-bold text-orange-600">${referralData.pendingEarnings}</p>
             <p className="text-sm text-gray-600">Pending Earnings</p>
           </CardContent>
         </Card>

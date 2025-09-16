@@ -303,7 +303,7 @@ const Trading: React.FC = () => {
                   <p className="text-sm text-gray-600 mb-1">Total Return</p>
                   <p className="text-2xl font-bold text-green-600">+{portfolioData.totalReturn}%</p>
                 </div>
-                <div className="text-center p-4 bg-gradient-to-br from-yellow-50 to-orange-50 rounded-xl">
+                <div className="text-center p-4 bg-gradient-to-br from-white to-orange-50 rounded-xl">
                   <p className="text-sm text-gray-600 mb-1">Daily Change</p>
                   <p className="text-2xl font-bold text-green-600">+{portfolioData.dailyChange}%</p>
                 </div>
@@ -371,7 +371,7 @@ const Trading: React.FC = () => {
                     <p className="font-medium text-gray-900">{trade.amount} {trade.pair.split('/')[0]}</p>
                     <p className="text-sm text-gray-600">@ ${trade.price}</p>
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      trade.status === 'completed' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
+                      trade.status === 'completed' ? 'bg-green-100 text-green-700' : 'bg-white text-orange-700'
                     }`}>
                       {trade.status}
                     </span>

@@ -28,7 +28,7 @@ interface QRPaymentHistoryProps {
 type FilterStatus = 'all' | 'pending' | 'paid' | 'expired' | 'cancelled';
 
 export const QRPaymentHistory: React.FC<QRPaymentHistoryProps> = ({ className }) => {
-  const { wallet } = useWallet();
+  const wallet = useWallet();
   const { toast } = useToast();
   const { formatAmount, formatTimeRemaining, getStatusColor, getStatusIcon } = useQRPayment();
   

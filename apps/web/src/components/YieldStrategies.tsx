@@ -105,7 +105,7 @@ export const YieldStrategies: React.FC = () => {
   const getRiskColor = (risk: string) => {
     switch (risk) {
       case 'low': return 'text-green-600 bg-green-100';
-      case 'medium': return 'text-yellow-600 bg-yellow-100';
+      case 'medium': return 'text-yellow-600 bg-white';
       case 'high': return 'text-red-600 bg-red-100';
       default: return 'text-gray-600 bg-gray-100';
     }
@@ -250,7 +250,7 @@ export const YieldStrategies: React.FC = () => {
                   <div className="flex items-center space-x-2 mb-2">
                     <CardTitle className="text-xl font-bold">{strategy.name}</CardTitle>
                     {strategy.isRecommended && (
-                      <Star className="w-5 h-5 text-yellow-500 fill-current" />
+                      <Star className="w-5 h-5 text-orange-500 fill-current" />
                     )}
                     {!strategy.isActive && (
                       <AlertTriangle className="w-5 h-5 text-orange-500" />

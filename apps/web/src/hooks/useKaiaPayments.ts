@@ -49,7 +49,7 @@ export const useKaiaPayments = () => {
   const [stats, setStats] = useState<PaymentStats | null>(null);
   const [balance, setBalance] = useState<string>('0');
   
-  const { wallet } = useWallet();
+  const wallet = useWallet();
   const { toast } = useToast();
 
   const clearError = useCallback(() => {

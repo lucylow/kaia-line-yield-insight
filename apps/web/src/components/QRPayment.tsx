@@ -29,7 +29,7 @@ interface QRPaymentProps {
 }
 
 export const QRPayment: React.FC<QRPaymentProps> = ({ className }) => {
-  const { wallet } = useWallet();
+  const wallet = useWallet();
   const { toast } = useToast();
   const {
     currentSession,

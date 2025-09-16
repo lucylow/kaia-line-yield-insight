@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { EnhancedModal } from '@/components/ui/enhanced-modal';
 import { Button } from '@/components/ui/button';
 import { X, ExternalLink, Loader2, CheckCircle, AlertCircle, Download } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -166,11 +166,19 @@ export const ConnectWalletModal: React.FC<ConnectWalletModalProps> = ({
   const cryptoWallets = walletOptions.filter(w => w.category === 'crypto');
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-lg w-full mx-4 p-0 bg-white rounded-3xl shadow-2xl border-0 overflow-hidden">
-        <div className="flex flex-col max-h-[90vh]">
+    <EnhancedModal
+      isOpen={isOpen}
+      onClose={onClose}
+      size="lg"
+      title="Connect Your Wallet"
+      description="Choose your preferred wallet to access LINE Yield features"
+      status={isLoading ? 'loading' : error ? 'error' : 'idle'}
+      statusMessage={error || (isLoading ? 'Connecting wallet...' : '')}
+      className="max-h-[90vh] overflow-hidden"
+    >
+      <div className="flex flex-col max-h-[90vh]">
           {/* Header */}
-          <DialogHeader className="flex-shrink-0 p-6 pb-4 bg-gradient-to-r from-green-50 to-blue-50 border-b border-gray-100">
+          <div className="flex-shrink-0 p-6 pb-4 bg-gradient-to-r from-green-50 to-blue-50 border-b border-gray-100">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center shadow-lg">
@@ -181,9 +189,9 @@ export const ConnectWalletModal: React.FC<ConnectWalletModalProps> = ({
                   </div>
                 </div>
                 <div>
-                  <DialogTitle className="text-2xl font-bold text-gray-900">
+                  <h2 className="text-2xl font-bold text-gray-900">
                     Mini Dapp
-                  </DialogTitle>
+                  </h2>
                   <p className="text-sm text-gray-600 mt-1 font-medium">Connect your wallet</p>
                 </div>
               </div>
@@ -196,7 +204,7 @@ export const ConnectWalletModal: React.FC<ConnectWalletModalProps> = ({
                 <X className="w-5 h-5 text-gray-500" />
               </Button>
             </div>
-          </DialogHeader>
+          </div>
 
           {/* Error Banner */}
           {showError && error && (
@@ -338,7 +346,7 @@ export const ConnectWalletModal: React.FC<ConnectWalletModalProps> = ({
             </div>
           </div>
         </div>
-      </DialogContent>
-    </Dialog>
+    </EnhancedModal>
   );
 };
+

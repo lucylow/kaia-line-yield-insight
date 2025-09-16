@@ -45,7 +45,7 @@ export const KaiaPaymentModal: React.FC<KaiaPaymentModalProps> = ({
   const [paymentResult, setPaymentResult] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   
-  const { wallet } = useWallet();
+  const wallet = useWallet();
   const { toast } = useToast();
 
   // Calculate fees when amount changes

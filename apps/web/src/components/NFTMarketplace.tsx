@@ -143,7 +143,7 @@ export const NFTMarketplace: React.FC = () => {
       case 'common': return 'text-gray-600 bg-gray-100';
       case 'rare': return 'text-blue-600 bg-blue-100';
       case 'epic': return 'text-purple-600 bg-purple-100';
-      case 'legendary': return 'text-yellow-600 bg-yellow-100';
+      case 'legendary': return 'text-yellow-600 bg-white';
       default: return 'text-gray-600 bg-gray-100';
     }
   };
@@ -531,8 +531,8 @@ export const NFTMarketplace: React.FC = () => {
                   <p className="text-3xl font-bold bg-gradient-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent">$1,250</p>
                   <p className="text-sm text-gray-600 mt-2">Available Loan Amount</p>
                 </div>
-                <div className="text-center p-6 bg-gradient-to-br from-yellow-50 to-orange-50 rounded-xl border border-yellow-200">
-                  <p className="text-3xl font-bold bg-gradient-to-r from-yellow-600 to-orange-600 bg-clip-text text-transparent">50%</p>
+                <div className="text-center p-6 bg-gradient-to-br from-white to-orange-50 rounded-xl border border-orange-200">
+                  <p className="text-3xl font-bold bg-gradient-to-r from-orange-600 to-orange-600 bg-clip-text text-transparent">50%</p>
                   <p className="text-sm text-gray-600 mt-2">Collateral Ratio</p>
                 </div>
               </div>

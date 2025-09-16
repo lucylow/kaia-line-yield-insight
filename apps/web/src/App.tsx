@@ -6,6 +6,8 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 import { AppRoutes } from './router/routes';
 import { AppLayout } from './layouts/AppLayout';
 import { performanceService } from './services/performanceService';
+import { languageDetectionService } from './services/languageDetectionService';
+import './i18n';
 
 // @lovable:main-app-component
 
@@ -18,9 +20,10 @@ function AppContent() {
 }
 
 function App() {
-  // Initialize performance optimizations
+  // Initialize performance optimizations and language detection
   React.useEffect(() => {
     performanceService.init();
+    languageDetectionService.initialize();
   }, []);
 
   return (

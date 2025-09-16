@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { EnhancedModal, EnhancedModalButton, EnhancedModalInput } from './ui/enhanced-modal';
+import { Button } from './ui/button';
+import { Input } from './ui/input';
+import { Label } from './ui/label';
 import { ProgressIndicator } from './ProgressIndicator';
 import { useWallet } from '../providers/SimpleWalletProvider';
 import { formatCurrency } from '../utils/formatters';
-import { ArrowUpRight, ArrowDownLeft, Info, Zap, CheckCircle, Clock } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { ArrowUpRight, ArrowDownLeft, Info, Zap, CheckCircle, Clock, Shield, TrendingUp, DollarSign, TrendingDown, Loader2 } from 'lucide-react';
+import { useToast } from '../hooks/use-toast';
 
 interface Step {
   id: string;
@@ -37,7 +37,7 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
 }) => {
   const [amount, setAmount] = useState('');
   const [transactionStep, setTransactionStep] = useState<'input' | 'processing' | 'success'>('input');
-  const { wallet } = useWallet();
+  const { isConnected } = useWallet();
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -102,132 +102,149 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
   ];
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-lg p-0 overflow-hidden">
-        <div className="bg-gradient-to-br from-card to-card/80 p-8">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-4 text-2xl">
-              <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg ${
-                isDeposit ? 'bg-yield shadow-yield' : 'bg-warning shadow-warning'
-              }`}>
-                <Icon className={`w-6 h-6 ${isDeposit ? 'text-yield-foreground' : 'text-warning-foreground'}`} />
-              </div>
-              <div>
-                <div className="font-bold tracking-tight">
-                  {isDeposit ? 'Deposit USDT' : 'Withdraw USDT'}
-                </div>
-                <div className="text-sm font-normal text-muted-foreground">
-                  {isDeposit ? 'Start earning yield today' : 'Access your funds anytime'}
-                </div>
-              </div>
-            </DialogTitle>
-          </DialogHeader>
+    <EnhancedModal
+      isOpen={isOpen}
+      onClose={onClose}
+      size="lg"
+      title={isDeposit ? 'Deposit USDT' : 'Withdraw USDT'}
+      description={isDeposit ? 'Start earning yield today' : 'Access your funds anytime'}
+      status={transactionStep === 'processing' ? 'loading' : transactionStep === 'success' ? 'success' : 'idle'}
+      statusMessage={
+        transactionStep === 'processing' ? 'Processing transaction...' :
+        transactionStep === 'success' ? 'Transaction completed successfully!' : ''
+      }
+      className="max-h-[90vh] overflow-hidden"
+    >
+      <div className="space-y-6">
+        {/* Transaction Icon */}
+        <div className="text-center">
+          <div className={`w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg mx-auto mb-4 ${
+            isDeposit ? 'bg-gradient-to-br from-green-500 to-emerald-500' : 'bg-gradient-to-br from-orange-500 to-red-500'
+          }`}>
+            <Icon className="w-8 h-8 text-white" />
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            {isDeposit ? 'Deposit Funds' : 'Withdraw Funds'}
+          </h3>
+          <p className="text-sm text-gray-600">
+            {isDeposit ? 'Add USDT to start earning yield' : 'Withdraw your USDT anytime'}
+          </p>
+        </div>
 
-          {transactionStep === 'input' && (
-            <form onSubmit={handleSubmit} className="space-y-8 mt-8">
-              <div className="space-y-4">
-                <Label htmlFor="amount" className="text-lg font-semibold">
-                  Amount to {isDeposit ? 'Deposit' : 'Withdraw'}
-                </Label>
-                <div className="relative">
-                  <Input
-                    id="amount"
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    max={maxAmount}
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                    placeholder="0.00"
-                    className="text-2xl pr-20 h-16 border-2 rounded-2xl font-bold"
-                  />
-                  <div className="absolute inset-y-0 right-0 flex items-center pr-6">
-                    <span className="text-muted-foreground font-semibold text-lg">USDT</span>
+        {transactionStep === 'input' && (
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Amount Input */}
+            <div className="space-y-4">
+              <EnhancedModalInput
+                label={`Amount to ${isDeposit ? 'Deposit' : 'Withdraw'}`}
+                type="number"
+                value={amount}
+                onChange={setAmount}
+                placeholder="0.00"
+                icon={<DollarSign className="w-4 h-4" />}
+                className="text-xl h-14 font-semibold"
+              />
+              
+              {/* Balance Display */}
+              <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Shield className="w-4 h-4 text-gray-500" />
+                    <span className="text-sm font-medium text-gray-600">
+                      {isDeposit ? 'Wallet Balance' : 'Available Balance'}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="text-lg font-bold text-gray-900">
+                      ${formatCurrency(parseFloat(maxAmount))} USDT
+                    </span>
+                    <EnhancedModalButton
+                      variant="secondary"
+                      size="sm"
+                      onClick={setMaxAmount}
+                    >
+                      Max
+                    </EnhancedModalButton>
                   </div>
                 </div>
-                
-                <div className="flex justify-between items-center p-4 bg-secondary/50 rounded-xl">
-                  <span className="text-sm font-medium text-muted-foreground">
-                    {isDeposit ? 'Wallet Balance' : 'Available'}: ${formatCurrency(parseFloat(maxAmount))}
-                  </span>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={setMaxAmount}
-                    className="text-primary hover:text-primary/80 font-semibold"
-                  >
-                    Use Max
-                  </Button>
-                </div>
               </div>
-
+            </div>
             {/* Transaction Details */}
-            <div className="bg-accent/80 rounded-2xl p-6 space-y-4 border">
-              <div className="flex items-center gap-3 text-lg font-semibold text-accent-foreground">
-                <Info className="w-5 h-5" />
+            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 space-y-4 border border-blue-200">
+              <div className="flex items-center gap-3 text-lg font-semibold text-gray-900">
+                <Info className="w-5 h-5 text-blue-600" />
                 Transaction Details
               </div>
               
-              <div className="space-y-4">
-                <div className="flex justify-between items-center p-3 bg-card/60 rounded-xl">
-                  <span className="text-muted-foreground font-medium">Current APY</span>
-                  <span className="font-bold text-lg">{(currentApy * 100).toFixed(2)}%</span>
+              <div className="space-y-3">
+                <div className="flex justify-between items-center p-4 bg-white/80 rounded-xl border border-white/50 shadow-sm">
+                  <span className="text-gray-700 font-medium">Current APY</span>
+                  <span className="font-bold text-lg text-blue-600">{(currentApy * 100).toFixed(2)}%</span>
                 </div>
                 
                 {isDeposit && amount && (
-                  <div className="flex justify-between items-center p-3 bg-yield-bg rounded-xl">
-                    <span className="text-yield/80 font-medium">Projected yearly yield</span>
-                    <span className="font-bold text-yield text-lg">
+                  <div className="flex justify-between items-center p-4 bg-white/80 rounded-xl border border-white/50 shadow-sm">
+                    <span className="text-gray-700 font-medium">Projected yearly yield</span>
+                    <span className="font-bold text-green-600 text-lg">
                       +${formatCurrency(projectedYield)}
                     </span>
                   </div>
                 )}
                 
-                <div className="flex justify-between items-center p-3 bg-yield-bg rounded-xl">
-                  <span className="text-yield/80 font-medium">Gas Fee</span>
+                <div className="flex justify-between items-center p-4 bg-white/80 rounded-xl border border-white/50 shadow-sm">
+                  <span className="text-gray-700 font-medium">Gas Fee</span>
                   <div className="flex items-center gap-2">
-                    <Zap className="w-4 h-4 text-yield" />
-                    <span className="font-bold text-yield">Free (Sponsored)</span>
+                    <Zap className="w-4 h-4 text-green-600" />
+                    <span className="font-bold text-green-600">Free (Sponsored)</span>
                   </div>
                 </div>
               </div>
             </div>
 
-              {/* Action Buttons */}
-              <div className="flex gap-4">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={onClose}
-                  className="flex-1 h-14 text-lg font-semibold border-2"
-                  disabled={isLoading}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  type="submit"
-                  variant={isDeposit ? "yield" : "warning"}
-                  disabled={!amount || parseFloat(amount) <= 0 || isLoading}
-                  className="flex-1 h-14 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
-                >
-                  {isLoading ? (
-                    <div className="flex items-center gap-3">
-                      <div className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                      Processing...
-                    </div>
-                  ) : (
-                    `${isDeposit ? 'Deposit' : 'Withdraw'} ${amount || '0'} USDT`
-                  )}
-                </Button>
-              </div>
+            {/* Action Buttons */}
+            <div className="flex gap-4 pt-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={onClose}
+                className="flex-1 h-12 text-base font-semibold rounded-xl border-2 border-gray-300 hover:bg-gray-50 hover:border-gray-400 transition-all duration-300"
+                disabled={isLoading}
+              >
+                Cancel
+              </Button>
+              <EnhancedModalButton
+                disabled={!amount || parseFloat(amount) <= 0 || isLoading}
+                className="flex-1 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0"
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                    Processing...
+                  </>
+                ) : (
+                  <>
+                    {isDeposit ? (
+                      <>
+                        <TrendingUp className="w-5 h-5 mr-2" />
+                        Deposit USDT
+                      </>
+                    ) : (
+                      <>
+                        <TrendingDown className="w-5 h-5 mr-2" />
+                        Withdraw USDT
+                      </>
+                    )}
+                  </>
+                )}
+              </EnhancedModalButton>
+            </div>
             </form>
           )}
 
           {transactionStep === 'processing' && (
-            <div className="space-y-8 mt-8">
+            <div className="space-y-6 mt-8">
               <div className="text-center">
-                <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="w-20 h-20 bg-gradient-to-br from-green-100 to-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
                   <Icon className="w-10 h-10 text-green-600 animate-pulse" />
                 </div>
                 <h3 className="text-xl font-semibold text-gray-800 mb-2">
@@ -243,9 +260,9 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
           )}
 
           {transactionStep === 'success' && (
-            <div className="space-y-8 mt-8">
+            <div className="space-y-6 mt-8">
               <div className="text-center">
-                <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce-in">
+                <div className="w-20 h-20 bg-gradient-to-br from-green-100 to-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg animate-bounce-in">
                   <CheckCircle className="w-10 h-10 text-green-600" />
                 </div>
                 <h3 className="text-xl font-semibold text-gray-800 mb-2">
@@ -260,7 +277,6 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
             </div>
           )}
         </div>
-      </DialogContent>
-    </Dialog>
-  );
-};
+      </EnhancedModal>
+    );
+  };
