@@ -19,14 +19,14 @@ export const NetworkBanner: React.FC<NetworkBannerProps> = ({
   // Don't show banner if on correct network and showWhenCorrect is false
   if (isCorrectNetwork && !showWhenCorrect) return null;
 
-  const getNetworkName = (chainId: number | null | undefined) => {
+  const getNetworkName = (chainId: number | undefined) => {
     switch (chainId) {
       case 1: return 'Ethereum';
       case 137: return 'Polygon';
       case 42161: return 'Arbitrum';
       case 8453: return 'Base';
       case 8217: return 'Kaia';
-      default: return `Chain ${chainId || 'Unknown'}`;
+      default: return `Chain ${chainId}`;
     }
   };
 

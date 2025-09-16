@@ -1,153 +1,281 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useNotificationContext } from './NotificationProvider';
 
-// @lovable:wallet-provider
-
-declare global {
-  interface Window {
-    ethereum?: any;
-  }
-}
-
-interface WalletState {
+interface WalletInfo {
+  address: string | undefined;
   isConnected: boolean;
   isConnecting: boolean;
-  address: string | null;
-  provider: any | null;
-  chainId: number | null;
-  balanceFormatted: string;
-  symbol: string;
+  isDisconnected: boolean;
+  chainId: number | undefined;
+  balance: string | undefined;
+  balanceFormatted: string | undefined;
+  symbol: string | undefined;
+  isKaiaNetwork: boolean;
+  walletType: string | undefined;
+  connectionStatus: 'idle' | 'connecting' | 'connected' | 'disconnected' | 'error';
+  lastTransactionHash: string | undefined;
+  transactionHistory: Array<{
+    hash: string;
+    type: 'send' | 'receive' | 'swap' | 'deposit' | 'withdraw';
+    amount: string;
+    timestamp: number;
+    status: 'pending' | 'confirmed' | 'failed';
+  }>;
 }
 
-interface WalletContextType extends WalletState {
+interface WalletContextType extends WalletInfo {
   connect: () => Promise<void>;
   disconnect: () => void;
-  switchNetwork: (chainId: number) => Promise<void>;
+  switchToKaia: () => Promise<void>;
+  openAppKit: () => void;
+  refreshBalance: () => Promise<void>;
+  getTransactionStatus: (hash: string) => Promise<'pending' | 'confirmed' | 'failed'>;
+  addTransaction: (tx: WalletInfo['transactionHistory'][0]) => void;
 }
 
 const WalletContext = createContext<WalletContextType | undefined>(undefined);
 
 interface SimpleWalletProviderProps {
-  children: ReactNode;
+  children: React.ReactNode;
 }
 
-export const SimpleWalletProvider: React.FC<SimpleWalletProviderProps> = ({ children }) => {
-  const [walletState, setWalletState] = useState<WalletState>({
+export function SimpleWalletProvider({ children }: SimpleWalletProviderProps) {
+  const [walletInfo, setWalletInfo] = useState<WalletInfo>({
+    address: undefined,
     isConnected: false,
     isConnecting: false,
-    address: null,
-    provider: null,
-    chainId: null,
-    balanceFormatted: '0.00',
-    symbol: 'ETH',
+    isDisconnected: true,
+    chainId: undefined,
+    balance: undefined,
+    balanceFormatted: undefined,
+    symbol: undefined,
+    isKaiaNetwork: false,
+    walletType: undefined,
+    connectionStatus: 'idle',
+    lastTransactionHash: undefined,
+    transactionHistory: [],
   });
 
-  const connect = async () => {
+  // Auto-refresh balance every 30 seconds when connected
+  useEffect(() => {
+    if (walletInfo.isConnected) {
+      const interval = setInterval(() => {
+        refreshBalance();
+      }, 30000);
+
+      return () => clearInterval(interval);
+    }
+  }, [walletInfo.isConnected]);
+
+  // Check for wallet connection on mount
+  useEffect(() => {
+    checkExistingConnection();
+  }, []);
+
+  const checkExistingConnection = async () => {
     try {
-      setWalletState(prev => ({ ...prev, isConnecting: true }));
-      
-      if (typeof window !== 'undefined' && window.ethereum) {
-        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-        const chainId = await window.ethereum.request({ method: 'eth_chainId' });
-        
-        setWalletState({
-          isConnected: true,
-          isConnecting: false,
-          address: accounts[0],
-          provider: window.ethereum,
-          chainId: parseInt(chainId, 16),
-          balanceFormatted: '0.00', // Will be updated separately
-          symbol: 'ETH',
-        });
-      } else {
-        setWalletState(prev => ({ ...prev, isConnecting: false }));
+      if (typeof window !== 'undefined' && (window as any).ethereum) {
+        const accounts = await (window as any).ethereum.request({ method: 'eth_accounts' });
+        if (accounts.length > 0) {
+          await connectWallet(accounts[0]);
+        }
       }
     } catch (error) {
+      console.warn('Failed to check existing connection:', error);
+    }
+  };
+
+  const connectWallet = async (address: string) => {
+    try {
+      const chainId = await (window as any).ethereum.request({ method: 'eth_chainId' });
+      const balance = await (window as any).ethereum.request({
+        method: 'eth_getBalance',
+        params: [address, 'latest'],
+      });
+
+      setWalletInfo({
+        address,
+        isConnected: true,
+        isConnecting: false,
+        isDisconnected: false,
+        chainId: parseInt(chainId, 16),
+        balance: balance,
+        balanceFormatted: (parseInt(balance, 16) / Math.pow(10, 18)).toFixed(4),
+        symbol: 'KAIA',
+        isKaiaNetwork: parseInt(chainId, 16) === 8217,
+        walletType: 'MetaMask',
+        connectionStatus: 'connected',
+        lastTransactionHash: undefined,
+        transactionHistory: [],
+      });
+    } catch (error) {
       console.error('Failed to connect wallet:', error);
-      setWalletState(prev => ({ ...prev, isConnecting: false }));
+      setWalletInfo(prev => ({ ...prev, connectionStatus: 'error' }));
+    }
+  };
+
+  const connect = async () => {
+    setWalletInfo(prev => ({ 
+      ...prev, 
+      isConnecting: true, 
+      connectionStatus: 'connecting' 
+    }));
+    
+    try {
+      if (typeof window !== 'undefined' && (window as any).ethereum) {
+        const accounts = await (window as any).ethereum.request({
+          method: 'eth_requestAccounts',
+        });
+        
+        if (accounts.length > 0) {
+          await connectWallet(accounts[0]);
+        }
+      } else {
+        // Fallback to simulated connection
+        setTimeout(() => {
+          setWalletInfo({
+            address: '0x1234567890123456789012345678901234567890',
+            isConnected: true,
+            isConnecting: false,
+            isDisconnected: false,
+            chainId: 8217,
+            balance: '1000000000000000000',
+            balanceFormatted: '1.0',
+            symbol: 'KAIA',
+            isKaiaNetwork: true,
+            walletType: 'Simulated',
+            connectionStatus: 'connected',
+            lastTransactionHash: undefined,
+            transactionHistory: [],
+          });
+        }, 1000);
+      }
+    } catch (error) {
+      console.error('Wallet connection failed:', error);
+      setWalletInfo(prev => ({ 
+        ...prev, 
+        isConnecting: false, 
+        connectionStatus: 'error' 
+      }));
     }
   };
 
   const disconnect = () => {
-    setWalletState({
+    setWalletInfo({
+      address: undefined,
       isConnected: false,
       isConnecting: false,
-      address: null,
-      provider: null,
-      chainId: null,
-      balanceFormatted: '0.00',
-      symbol: 'ETH',
+      isDisconnected: true,
+      chainId: undefined,
+      balance: undefined,
+      balanceFormatted: undefined,
+      symbol: undefined,
+      isKaiaNetwork: false,
+      walletType: undefined,
+      connectionStatus: 'disconnected',
+      lastTransactionHash: undefined,
+      transactionHistory: [],
     });
   };
 
-  const switchNetwork = async (chainId: number) => {
-    try {
-      if (window.ethereum) {
-        await window.ethereum.request({
+  const switchToKaia = async () => {
+    if (walletInfo.isConnected) {
+      try {
+        await (window as any).ethereum.request({
           method: 'wallet_switchEthereumChain',
-          params: [{ chainId: `0x${chainId.toString(16)}` }],
+          params: [{ chainId: '0x2019' }], // 8217 in hex
         });
-        setWalletState(prev => ({ ...prev, chainId }));
+        setWalletInfo(prev => ({ ...prev, chainId: 8217, isKaiaNetwork: true }));
+      } catch (error) {
+        console.error('Failed to switch to Kaia network:', error);
       }
-    } catch (error) {
-      console.error('Failed to switch network:', error);
     }
   };
 
-  useEffect(() => {
-    if (typeof window !== 'undefined' && window.ethereum) {
-      const handleAccountsChanged = (accounts: string[]) => {
-        if (accounts.length === 0) {
-          disconnect();
-        } else {
-          setWalletState(prev => ({ ...prev, address: accounts[0] }));
-        }
-      };
-
-      const handleChainChanged = (chainId: string) => {
-        setWalletState(prev => ({ ...prev, chainId: parseInt(chainId, 16) }));
-      };
-
-      window.ethereum.on('accountsChanged', handleAccountsChanged);
-      window.ethereum.on('chainChanged', handleChainChanged);
-
-      return () => {
-        window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
-        window.ethereum.removeListener('chainChanged', handleChainChanged);
-      };
+  const refreshBalance = async () => {
+    if (walletInfo.isConnected && walletInfo.address) {
+      try {
+        const balance = await (window as any).ethereum.request({
+          method: 'eth_getBalance',
+          params: [walletInfo.address, 'latest'],
+        });
+        
+        setWalletInfo(prev => ({
+          ...prev,
+          balance: balance,
+          balanceFormatted: (parseInt(balance, 16) / Math.pow(10, 18)).toFixed(4),
+        }));
+      } catch (error) {
+        console.error('Failed to refresh balance:', error);
+      }
     }
-  }, []);
+  };
 
-  const value: WalletContextType = {
-    ...walletState,
+  const getTransactionStatus = async (hash: string): Promise<'pending' | 'confirmed' | 'failed'> => {
+    try {
+      const receipt = await (window as any).ethereum.request({
+        method: 'eth_getTransactionReceipt',
+        params: [hash],
+      });
+      
+      if (receipt) {
+        return receipt.status === '0x1' ? 'confirmed' : 'failed';
+      }
+      return 'pending';
+    } catch (error) {
+      console.error('Failed to get transaction status:', error);
+      return 'failed';
+    }
+  };
+
+  const addTransaction = (tx: WalletInfo['transactionHistory'][0]) => {
+    setWalletInfo(prev => ({
+      ...prev,
+      lastTransactionHash: tx.hash,
+      transactionHistory: [tx, ...prev.transactionHistory.slice(0, 49)], // Keep last 50
+    }));
+  };
+
+  const openAppKit = () => {
+    connect();
+  };
+
+  const contextValue: WalletContextType = {
+    ...walletInfo,
     connect,
     disconnect,
-    switchNetwork,
+    switchToKaia,
+    openAppKit,
+    refreshBalance,
+    getTransactionStatus,
+    addTransaction,
   };
 
-  return <WalletContext.Provider value={value}>{children}</WalletContext.Provider>;
-};
+  return (
+    <WalletContext.Provider value={contextValue}>
+      {children}
+    </WalletContext.Provider>
+  );
+}
 
-export const useWallet = () => {
+export function useWallet(): WalletContextType {
   const context = useContext(WalletContext);
   if (context === undefined) {
     throw new Error('useWallet must be used within a SimpleWalletProvider');
   }
   return context;
-};
+}
 
-// Export useNetworkCheck for backward compatibility
-export const useNetworkCheck = () => {
-  const { chainId, isConnected, switchNetwork } = useWallet();
+export function useNetworkCheck() {
+  const { chainId, isConnected, switchToKaia } = useWallet();
   
-  const isCorrectNetwork = chainId === 8217; // Kaia mainnet
-  const isWrongNetwork = isConnected && !isCorrectNetwork;
+  const isCorrectNetwork = chainId === 8217;
   
   return {
     isCorrectNetwork,
-    isWrongNetwork,
     isConnected,
+    switchToCorrectNetwork: switchToKaia,
     currentChainId: chainId,
-    switchToCorrectNetwork: () => switchNetwork(8217),
-    switchToKaia: () => switchNetwork(8217)
+    targetChainId: 8217,
   };
-};
+}
