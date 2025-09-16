@@ -3,22 +3,18 @@
   "version": "1.0.0",
   "description": "A comprehensive DeFi platform built on Kaia blockchain and leveraging Kaia-native USDT and stablecoin DeFi protocols",
   "private": true,
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
   "scripts": {
-    "dev": "pnpm --filter web dev",
-    "build": "pnpm --filter web build",
+    "dev": "cd apps/web && npm run dev",
+    "build": "cd apps/web && npm run build",
     "build:lovable": "cd apps/web && npm run build:lovable",
-    "lint": "pnpm -r lint",
-    "type-check": "pnpm -r type-check",
-    "test": "pnpm -r test",
-    "clean": "pnpm -r clean",
-    "deploy": "pnpm --filter backend deploy",
-    "contracts:compile": "pnpm --filter contracts compile",
-    "contracts:deploy": "pnpm --filter contracts deploy",
-    "contracts:test": "pnpm --filter contracts test"
+    "lint": "cd apps/web && npm run lint",
+    "type-check": "cd apps/web && npm run type-check",
+    "test": "cd apps/web && npm run test",
+    "clean": "cd apps/web && npm run clean",
+    "deploy": "cd apps/backend && npm run deploy",
+    "contracts:compile": "cd contracts && npm run compile",
+    "contracts:deploy": "cd contracts && npm run deploy",
+    "contracts:test": "cd contracts && npm run test"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
@@ -27,10 +23,8 @@
     "typescript": "^5.0.0"
   },
   "engines": {
-    "node": ">=18.0.0",
-    "pnpm": ">=8.0.0"
+    "node": ">=18.0.0"
   },
-  "packageManager": "pnpm@8.15.0",
   "dependencies": {
     "lovable-tagger": "^1.1.9"
   }

@@ -3,29 +3,16 @@ export default {
   name: "Kaia LINE Yield Platform",
   description: "A comprehensive DeFi platform built on Kaia blockchain and leveraging Kaia-native USDT and stablecoin DeFi protocols",
   
-  // Entry points
+  // Entry points - simplified for Lovable compatibility
   entry: {
-    main: "./apps/web/src/main.tsx",
-    app: "./apps/web/src/App.tsx"
+    main: "./apps/web/src/main.tsx"
   },
   
-  // Component tags for Lovable
+  // Component tags for Lovable - minimal set to avoid build issues
   components: {
     main: "./apps/web/src/App.tsx",
-    dashboard: "./apps/web/src/components/Dashboard.tsx",
-    yieldStrategies: "./apps/web/src/components/YieldStrategies.tsx",
-    nftMarketplace: "./apps/web/src/components/NFTMarketplace.tsx",
-    referralSystem: "./apps/web/src/components/ReferralSystem.tsx",
-    transactionHistory: "./apps/web/src/components/TransactionHistory.tsx",
-    walletProvider: "./apps/web/src/providers/SimpleWalletProvider.tsx",
     button: "./apps/web/src/components/ui/button.tsx",
-    card: "./apps/web/src/components/ui/card.tsx",
-    errorBoundary: "./apps/web/src/components/ErrorBoundary.tsx",
-    connectWallet: "./apps/web/src/components/ConnectWallet.tsx",
-    walletConnect: "./apps/web/src/components/WalletConnectButton.tsx",
-    analytics: "./apps/web/src/components/AnalyticsDashboard.tsx",
-    trading: "./apps/web/src/components/TradeDashboard.tsx",
-    payments: "./apps/web/src/components/PaymentModal.tsx"
+    card: "./apps/web/src/components/ui/card.tsx"
   },
   
   // Build configuration
@@ -42,17 +29,9 @@ export default {
     host: "::"
   },
   
-  // Features
+  // Features - core functionality only
   features: {
-    wallet: true,
-    yieldFarming: true,
-    nftMarketplace: true,
-    referralSystem: true,
-    transactionHistory: true,
     responsive: true,
-    errorHandling: true,
-    analytics: true,
-    trading: true,
-    payments: true
+    errorHandling: true
   }
 };
