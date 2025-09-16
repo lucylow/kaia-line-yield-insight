@@ -6,23 +6,14 @@ export default {
   // Entry points
   entry: {
     main: "./apps/web/src/main.tsx",
-    app: "./apps/web/src/App.tsx"
+    app: "./apps/web/src/App-lovable.tsx"
   },
   
-  // Component tags for Lovable
+  // Component tags for Lovable - simplified to avoid complex dependencies
   components: {
-    main: "./apps/web/src/App.tsx",
-    dashboard: "./apps/web/src/components/Dashboard.tsx",
-    yieldStrategies: "./apps/web/src/components/YieldStrategies.tsx",
-    nftMarketplace: "./apps/web/src/components/NFTMarketplace.tsx",
-    referralSystem: "./apps/web/src/components/ReferralSystem.tsx",
-    transactionHistory: "./apps/web/src/components/TransactionHistory.tsx",
-    walletProvider: "./apps/web/src/providers/SimpleWalletProvider.tsx",
+    main: "./apps/web/src/App-lovable.tsx",
     button: "./apps/web/src/components/ui/button.tsx",
-    card: "./apps/web/src/components/ui/card.tsx",
-    errorBoundary: "./apps/web/src/components/ErrorBoundary.tsx",
-    connectWallet: "./apps/web/src/components/ConnectWallet.tsx",
-    walletConnect: "./apps/web/src/components/WalletConnectButton.tsx"
+    card: "./apps/web/src/components/ui/card.tsx"
   },
   
   // Build configuration
@@ -39,17 +30,9 @@ export default {
     host: "::"
   },
   
-  // Features
+  // Features - core functionality only
   features: {
-    wallet: true,
-    yieldFarming: true,
-    nftMarketplace: true,
-    referralSystem: true,
-    transactionHistory: true,
     responsive: true,
-    errorHandling: true,
-    analytics: true,
-    trading: true,
-    payments: true
+    errorHandling: true
   }
 };
