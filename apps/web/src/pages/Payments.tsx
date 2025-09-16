@@ -277,7 +277,7 @@ const Payments: React.FC = () => {
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="font-medium">{formatKaiaAmount(parseFloat(payment.amount))} KAIA</p>
+                        <p className="font-medium">{formatKaiaAmount(payment.amount)} KAIA</p>
                         <Badge 
                           variant="outline" 
                           className={getKaiaStatusColor(payment.status)}
@@ -431,7 +431,7 @@ const Payments: React.FC = () => {
                           </div>
                         </div>
                         <div className="text-right">
-                          <p className="font-medium">{formatKaiaAmount(parseFloat(payment.amount))} KAIA</p>
+                          <p className="font-medium">{formatKaiaAmount(payment.amount)} KAIA</p>
                           <Badge 
                             variant="outline" 
                             className={getKaiaStatusColor(payment.status)}
