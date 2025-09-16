@@ -15,12 +15,17 @@ export const ConnectWallet: React.FC<ConnectWalletProps> = ({ className = '' }) 
   const { address, isConnected, connect, disconnect, balanceFormatted, symbol } = useWallet();
   const { toast } = useToast();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isConnecting, setIsConnecting] = useState(false);
+  const [connectionError, setConnectionError] = useState<string | null>(null);
 
   const handleConnect = async () => {
     setIsModalOpen(true);
   };
 
   const handleWalletConnect = async (walletType: string) => {
+    setIsConnecting(true);
+    setConnectionError(null);
+    
     try {
       // Handle different wallet types
       if (walletType === 'okx' || walletType === 'bitget') {
@@ -30,20 +35,39 @@ export const ConnectWallet: React.FC<ConnectWalletProps> = ({ className = '' }) 
           title: "Wallet Connected",
           description: `Successfully connected ${walletType} wallet to Kaia testnet`,
         });
+        setIsModalOpen(false);
       } else {
         // For social logins, show a message
         toast({
           title: "Social Login",
           description: `${walletType} login integration coming soon!`,
         });
+        setIsModalOpen(false);
       }
     } catch (error) {
       console.error('Failed to connect wallet:', error);
+      let errorMessage = "Connection failed";
+      
+      if (error instanceof Error) {
+        if (error.message.includes('User rejected')) {
+          errorMessage = "Connection cancelled by user";
+        } else if (error.message.includes('No accounts found')) {
+          errorMessage = "No wallet accounts found";
+        } else if (error.message.includes('wallet not found')) {
+          errorMessage = "Wallet not installed. Please install a compatible wallet.";
+        } else {
+          errorMessage = error.message;
+        }
+      }
+      
+      setConnectionError(errorMessage);
       toast({
         title: "Connection Failed",
-        description: "Please make sure you have a compatible wallet installed",
+        description: errorMessage,
         variant: "destructive",
       });
+    } finally {
+      setIsConnecting(false);
     }
   };
 
@@ -151,6 +175,8 @@ export const ConnectWallet: React.FC<ConnectWalletProps> = ({ className = '' }) 
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onConnect={handleWalletConnect}
+        isLoading={isConnecting}
+        error={connectionError}
       />
     </div>
   );

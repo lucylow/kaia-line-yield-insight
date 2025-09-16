@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight, LineChart, ArrowUp, PlayCircle, Menu, X, Home, TrendingUp, Users, Award, ShoppingBag, History, CreditCard, BarChart, Wallet, User, Settings, HelpCircle } from 'lucide-react';
 import { ConnectWallet } from './ConnectWallet';
+import { ConnectWalletButton } from './ConnectWalletButton';
 import { useWallet } from '../providers/SimpleWalletProvider';
 
 export const UnifiedLandingPage: React.FC = () => {
@@ -58,9 +59,9 @@ export const UnifiedLandingPage: React.FC = () => {
             
             {/* Desktop Connect Wallet */}
             <div className="hidden md:flex gap-2 lg:gap-4 items-center">
-              <button className="bg-gradient-to-r from-emerald-400 to-emerald-500 text-white hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 px-4 py-2 rounded-lg">
+              <ConnectWalletButton className="bg-gradient-to-r from-emerald-400 to-emerald-500 text-white hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 px-4 py-2 rounded-lg">
                 Connect Wallet
-              </button>
+              </ConnectWalletButton>
             </div>
 
             {/* Mobile Menu Button */}

@@ -87,30 +87,54 @@ export function SimpleWalletProvider({ children }: SimpleWalletProviderProps) {
 
   const connectWallet = async (address: string) => {
     try {
-      const chainId = await (window as any).ethereum.request({ method: 'eth_chainId' });
-      const balance = await (window as any).ethereum.request({
-        method: 'eth_getBalance',
-        params: [address, 'latest'],
-      });
+      // Check if we have a real Ethereum provider
+      if (typeof window !== 'undefined' && (window as any).ethereum) {
+        const chainId = await (window as any).ethereum.request({ method: 'eth_chainId' });
+        const balance = await (window as any).ethereum.request({
+          method: 'eth_getBalance',
+          params: [address, 'latest'],
+        });
 
-      setWalletInfo({
-        address,
-        isConnected: true,
-        isConnecting: false,
-        isDisconnected: false,
-        chainId: parseInt(chainId, 16),
-        balance: balance,
-        balanceFormatted: (parseInt(balance, 16) / Math.pow(10, 18)).toFixed(4),
-        symbol: 'KAIA',
-        isKaiaNetwork: parseInt(chainId, 16) === 8217,
-        walletType: 'MetaMask',
-        connectionStatus: 'connected',
-        lastTransactionHash: undefined,
-        transactionHistory: [],
-      });
+        setWalletInfo({
+          address,
+          isConnected: true,
+          isConnecting: false,
+          isDisconnected: false,
+          chainId: parseInt(chainId, 16),
+          balance: balance,
+          balanceFormatted: (parseInt(balance, 16) / Math.pow(10, 18)).toFixed(4),
+          symbol: 'KAIA',
+          isKaiaNetwork: parseInt(chainId, 16) === 8217,
+          walletType: 'MetaMask',
+          connectionStatus: 'connected',
+          lastTransactionHash: undefined,
+          transactionHistory: [],
+        });
+      } else {
+        // Fallback for demo/simulation mode
+        setWalletInfo({
+          address,
+          isConnected: true,
+          isConnecting: false,
+          isDisconnected: false,
+          chainId: 8217,
+          balance: '1000000000000000000',
+          balanceFormatted: '1.0',
+          symbol: 'KAIA',
+          isKaiaNetwork: true,
+          walletType: 'Demo',
+          connectionStatus: 'connected',
+          lastTransactionHash: undefined,
+          transactionHistory: [],
+        });
+      }
     } catch (error) {
       console.error('Failed to connect wallet:', error);
-      setWalletInfo(prev => ({ ...prev, connectionStatus: 'error' }));
+      setWalletInfo(prev => ({ 
+        ...prev, 
+        isConnecting: false, 
+        connectionStatus: 'error' 
+      }));
     }
   };
 
@@ -129,26 +153,13 @@ export function SimpleWalletProvider({ children }: SimpleWalletProviderProps) {
         
         if (accounts.length > 0) {
           await connectWallet(accounts[0]);
+        } else {
+          throw new Error('No accounts found');
         }
       } else {
-        // Fallback to simulated connection
-        setTimeout(() => {
-          setWalletInfo({
-            address: '0x1234567890123456789012345678901234567890',
-            isConnected: true,
-            isConnecting: false,
-            isDisconnected: false,
-            chainId: 8217,
-            balance: '1000000000000000000',
-            balanceFormatted: '1.0',
-            symbol: 'KAIA',
-            isKaiaNetwork: true,
-            walletType: 'Simulated',
-            connectionStatus: 'connected',
-            lastTransactionHash: undefined,
-            transactionHistory: [],
-          });
-        }, 1000);
+        // Fallback to simulated connection for demo purposes
+        const demoAddress = '0x' + Math.random().toString(16).substr(2, 40);
+        await connectWallet(demoAddress);
       }
     } catch (error) {
       console.error('Wallet connection failed:', error);
@@ -157,6 +168,7 @@ export function SimpleWalletProvider({ children }: SimpleWalletProviderProps) {
         isConnecting: false, 
         connectionStatus: 'error' 
       }));
+      throw error; // Re-throw so the UI can handle it
     }
   };
 

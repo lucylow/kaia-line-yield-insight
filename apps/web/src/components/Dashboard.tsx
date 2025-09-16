@@ -30,18 +30,13 @@ export const Dashboard: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
 
-  if (!isConnected) {
-    return (
-      <div className="text-center py-12">
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">
-          Connect your wallet to view dashboard
-        </h3>
-        <p className="text-gray-600">
-          Please connect your wallet to access yield farming features
-        </p>
-      </div>
-    );
-  }
+  // Wallet connection is now optional - show demo data when not connected
+  const demoData = !isConnected ? {
+    totalDeposited: '0',
+    totalEarned: '0',
+    currentAPY: '8.5',
+    activeStrategies: 0
+  } : data;
 
   if (isLoading) {
     return (
@@ -61,6 +56,13 @@ export const Dashboard: React.FC = () => {
               Dashboard
             </h1>
             <p className="text-lg text-gray-600">Monitor your yield farming performance</p>
+            {!isConnected && (
+              <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                <p className="text-sm text-blue-700">
+                  💡 Connect your wallet to see your actual data and start earning yield
+                </p>
+              </div>
+            )}
           </div>
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2 text-sm text-gray-500">
@@ -86,7 +88,7 @@ export const Dashboard: React.FC = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-gray-900">
-              $<AnimatedCounter value={parseFloat(data.totalDeposited)} />
+              $<AnimatedCounter value={parseFloat(demoData.totalDeposited)} />
             </div>
           </CardContent>
         </Card>
@@ -99,7 +101,7 @@ export const Dashboard: React.FC = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent">
-              $<AnimatedCounter value={parseFloat(data.totalEarned)} />
+              $<AnimatedCounter value={parseFloat(demoData.totalEarned)} />
             </div>
           </CardContent>
         </Card>
@@ -112,7 +114,7 @@ export const Dashboard: React.FC = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              <AnimatedCounter value={parseFloat(data.currentAPY)} suffix="%" />
+              <AnimatedCounter value={parseFloat(demoData.currentAPY)} suffix="%" />
             </div>
           </CardContent>
         </Card>
@@ -125,7 +127,7 @@ export const Dashboard: React.FC = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-gray-900">
-              <AnimatedCounter value={data.activeStrategies} />
+              <AnimatedCounter value={demoData.activeStrategies} />
             </div>
           </CardContent>
         </Card>

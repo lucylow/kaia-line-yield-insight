@@ -18,9 +18,14 @@ export const ConnectWalletButton: React.FC<ConnectWalletButtonProps> = ({
   children
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isConnecting, setIsConnecting] = useState(false);
+  const [connectionError, setConnectionError] = useState<string | null>(null);
   const { toast } = useToast();
 
   const handleWalletConnect = async (walletType: string) => {
+    setIsConnecting(true);
+    setConnectionError(null);
+    
     try {
       // Handle different wallet types
       if (walletType === 'okx' || walletType === 'bitget') {
@@ -29,20 +34,39 @@ export const ConnectWalletButton: React.FC<ConnectWalletButtonProps> = ({
           title: "Wallet Connected",
           description: `Successfully connected ${walletType} wallet`,
         });
+        setIsModalOpen(false);
       } else {
         // For social logins, show a message
         toast({
           title: "Social Login",
           description: `${walletType} login integration coming soon!`,
         });
+        setIsModalOpen(false);
       }
     } catch (error) {
       console.error('Failed to connect wallet:', error);
+      let errorMessage = "Connection failed";
+      
+      if (error instanceof Error) {
+        if (error.message.includes('User rejected')) {
+          errorMessage = "Connection cancelled by user";
+        } else if (error.message.includes('No accounts found')) {
+          errorMessage = "No wallet accounts found";
+        } else if (error.message.includes('wallet not found')) {
+          errorMessage = "Wallet not installed. Please install a compatible wallet.";
+        } else {
+          errorMessage = error.message;
+        }
+      }
+      
+      setConnectionError(errorMessage);
       toast({
         title: "Connection Failed",
-        description: "Please try again",
+        description: errorMessage,
         variant: "destructive",
       });
+    } finally {
+      setIsConnecting(false);
     }
   };
 
@@ -66,6 +90,8 @@ export const ConnectWalletButton: React.FC<ConnectWalletButtonProps> = ({
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onConnect={handleWalletConnect}
+        isLoading={isConnecting}
+        error={connectionError}
       />
     </>
   );

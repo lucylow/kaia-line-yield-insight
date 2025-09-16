@@ -6,19 +6,16 @@ import { useKaiaWallet } from '@/hooks/useKaiaWallet';
 export const TokenManagementPage: React.FC = () => {
   const { isConnected } = useKaiaWallet();
 
-  if (!isConnected) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-white to-orange-50 flex items-center justify-center p-4">
-        <div className="max-w-md w-full">
-          <KaiaWalletConnection showDetails={true} />
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-white to-orange-50">
       <div className="container mx-auto px-4 py-8 max-w-6xl">
+        {!isConnected && (
+          <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <p className="text-sm text-blue-700">
+              💡 Connect your wallet to manage tokens and interact with smart contracts
+            </p>
+          </div>
+        )}
         <TokenManagementPanel />
       </div>
     </div>

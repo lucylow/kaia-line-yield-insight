@@ -3,6 +3,7 @@ import { Button } from './ui/button';
 import { Wallet, Copy, ExternalLink, LogOut } from 'lucide-react';
 import { useWallet } from '../providers/SimpleWalletProvider';
 import { truncateAddress } from '../utils/formatters';
+import { ConnectWalletButton } from './ConnectWalletButton';
 
 interface WalletConnectButtonProps {
   variant?: 'default' | 'destructive' | 'outline' | 'ghost';
@@ -78,15 +79,14 @@ const WalletConnectButton: React.FC<WalletConnectButtonProps> = ({
   }
 
   return (
-    <Button
+    <ConnectWalletButton
       variant={variant}
       size={size}
-      onClick={connect}
-      className={`flex items-center gap-2 ${className}`}
+      className={className}
     >
       <Wallet className="w-4 h-4" />
       Connect Wallet
-    </Button>
+    </ConnectWalletButton>
   );
 };
 

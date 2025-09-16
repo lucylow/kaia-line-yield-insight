@@ -8,6 +8,7 @@ import { MobileNavigation } from './MobileNavigation';
 import { SettingsPanel } from './SettingsPanel';
 import { AuthModal } from './AuthModal';
 import { LanguageSwitcher } from './LanguageSwitcher';
+import { ConnectWalletButton } from './ConnectWalletButton';
 import { useTranslation } from '../i18n';
 
 export const Header = () => {
@@ -167,13 +168,12 @@ export const Header = () => {
                   <User className="w-4 h-4 mr-2" />
                   {t('common.signIn')}
                 </Button>
-                <Button 
-                  onClick={() => connectWallet()} 
+                <ConnectWalletButton 
                   className="bg-gradient-to-r from-emerald-400 to-emerald-500 text-white hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
                 >
                   <Wallet className="w-4 h-4 mr-2" />
                   {t('wallet.connect')}
-                </Button>
+                </ConnectWalletButton>
               </div>
             )}
           </div>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
-import { RouterNavigation, DesktopSidebar } from '../components/RouterNavigation';
+import { SimpleNavigation } from '../components/SimpleNavigation';
 import { Breadcrumb } from '../components/Breadcrumb';
 import { RouteTransition } from '../components/RouteTransition';
 import { NetworkBanner } from '../components/NetworkBanner';
@@ -8,11 +8,8 @@ import { NetworkBanner } from '../components/NetworkBanner';
 export const AppLayout: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-      {/* Mobile Navigation */}
-      <RouterNavigation />
-
-      {/* Desktop Sidebar */}
-      <DesktopSidebar />
+      {/* Navigation */}
+      <SimpleNavigation />
 
       {/* Main Content */}
       <div className="lg:pl-64 pt-16 lg:pt-0">

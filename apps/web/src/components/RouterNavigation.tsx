@@ -25,12 +25,12 @@ export const RouterNavigation: React.FC<RouterNavigationProps> = ({ className })
   const [isOpen, setIsOpen] = useState(false);
   const { isConnected, address, balanceFormatted, symbol, disconnect } = useWallet();
 
-  // Convert route config to navigation items
+  // Convert route config to navigation items with direct paths
   const navigationItems: NavigationItem[] = routeConfig.protected.map(route => ({
     id: route.path.split('/').pop() || 'dashboard',
     label: route.label,
     icon: route.icon,
-    path: route.path,
+    path: route.path.replace('/app', ''), // Remove /app prefix for direct access
   }));
 
   const getActiveTab = () => {

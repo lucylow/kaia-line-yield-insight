@@ -33,8 +33,25 @@ export const AppRoutes: React.FC = () => {
         <Route path="/" element={<Landing />} />
         <Route path="/landing" element={<Landing />} />
         
-        {/* Protected Routes */}
-        <Route path="/app" element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
+        {/* Direct Access Routes - No Wallet Gate */}
+        <Route path="/dashboard" element={<AppLayout><Dashboard /></AppLayout>} />
+        <Route path="/analytics" element={<AppLayout><Analytics /></AppLayout>} />
+        <Route path="/realtime" element={<AppLayout><RealTime /></AppLayout>} />
+        <Route path="/strategies" element={<AppLayout><YieldStrategies /></AppLayout>} />
+        <Route path="/strategies/*" element={<AppLayout><YieldStrategiesRoutes /></AppLayout>} />
+        <Route path="/nft" element={<AppLayout><NFTMarketplace /></AppLayout>} />
+        <Route path="/nft/*" element={<AppLayout><NFTMarketplaceRoutes /></AppLayout>} />
+        <Route path="/trading" element={<AppLayout><Trading /></AppLayout>} />
+        <Route path="/trading/*" element={<AppLayout><TradingRoutes /></AppLayout>} />
+        <Route path="/referral" element={<AppLayout><ReferralSystem /></AppLayout>} />
+        <Route path="/transactions" element={<AppLayout><TransactionHistory /></AppLayout>} />
+        <Route path="/payments" element={<AppLayout><Payments /></AppLayout>} />
+        <Route path="/wallet-demo" element={<AppLayout><WalletDemo /></AppLayout>} />
+        <Route path="/profile" element={<AppLayout><Profile /></AppLayout>} />
+        <Route path="/settings" element={<AppLayout><Settings /></AppLayout>} />
+        
+        {/* App Routes - No Wallet Gate */}
+        <Route path="/app" element={<AppLayout />}>
           {/* Dashboard Routes */}
           <Route index element={<Navigate to="/app/dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
@@ -50,7 +67,7 @@ export const AppRoutes: React.FC = () => {
           {/* Trading Routes */}
           <Route path="trading/*" element={<TradingRoutes />} />
           
-          {/* Other Protected Routes */}
+          {/* Other Routes */}
           <Route path="referral" element={<ReferralSystem />} />
           <Route path="transactions" element={<TransactionHistory />} />
           <Route path="payments" element={<Payments />} />
