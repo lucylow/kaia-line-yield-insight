@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useWallet } from '../providers/SimpleWalletProvider';
 import { Button } from '@/components/ui/button';
 import { KLAYTN_TESTNET } from '../utils/constants';
 import { Wallet, Copy, ExternalLink } from 'lucide-react';
 import { truncateAddress } from '../utils/formatters';
 import { useToast } from '@/hooks/use-toast';
+import { ConnectWalletModal } from './ConnectWalletModal';
 
 interface ConnectWalletProps {
   className?: string;
@@ -13,14 +14,29 @@ interface ConnectWalletProps {
 export const ConnectWallet: React.FC<ConnectWalletProps> = ({ className = '' }) => {
   const { address, isConnected, connect, disconnect, balanceFormatted, symbol } = useWallet();
   const { toast } = useToast();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleConnect = async () => {
+    setIsModalOpen(true);
+  };
+
+  const handleWalletConnect = async (walletType: string) => {
     try {
-      connect();
-      toast({
-        title: "Wallet Connected",
-        description: "Successfully connected to Kaia testnet",
-      });
+      // Handle different wallet types
+      if (walletType === 'okx' || walletType === 'bitget') {
+        // For crypto wallets, use the existing connect function
+        await connect();
+        toast({
+          title: "Wallet Connected",
+          description: `Successfully connected ${walletType} wallet to Kaia testnet`,
+        });
+      } else {
+        // For social logins, show a message
+        toast({
+          title: "Social Login",
+          description: `${walletType} login integration coming soon!`,
+        });
+      }
     } catch (error) {
       console.error('Failed to connect wallet:', error);
       toast({
@@ -130,6 +146,12 @@ export const ConnectWallet: React.FC<ConnectWalletProps> = ({ className = '' }) 
           ⚡ Gas-free transactions with sponsored fees
         </p>
       </div>
+      
+      <ConnectWalletModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onConnect={handleWalletConnect}
+      />
     </div>
   );
 };
