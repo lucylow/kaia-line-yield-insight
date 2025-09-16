@@ -369,7 +369,7 @@ const Payments: React.FC = () => {
                     <div>
                       <p className="text-sm font-medium text-gray-600">Total Volume</p>
                       <p className="text-2xl font-bold">
-                        {kaiaStats?.totalVolumeProcessed ? formatKaiaAmount(parseFloat(kaiaStats.totalVolumeProcessed)) : '0.0000'} KAIA
+                        {kaiaStats?.totalVolumeProcessed ? formatKaiaAmount(kaiaStats.totalVolumeProcessed) : '0.0000'} KAIA
                       </p>
                     </div>
                     <TrendingUp className="h-8 w-8 text-blue-600" />
@@ -497,7 +497,7 @@ const Payments: React.FC = () => {
                     <div className="flex items-center justify-between">
                       <span>KAIA Volume</span>
                       <span className="font-medium">
-                        {kaiaStats?.totalVolumeProcessed ? formatKaiaAmount(parseFloat(kaiaStats.totalVolumeProcessed)) : '0.0000'} KAIA
+                        {kaiaStats?.totalVolumeProcessed ? formatKaiaAmount(kaiaStats.totalVolumeProcessed) : '0.0000'} KAIA
                       </span>
                     </div>
                     <div className="flex items-center justify-between">

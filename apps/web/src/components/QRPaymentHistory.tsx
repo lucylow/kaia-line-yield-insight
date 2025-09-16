@@ -69,8 +69,7 @@ export const QRPaymentHistory: React.FC<QRPaymentHistoryProps> = ({ className })
         return (
           session.id.toLowerCase().includes(searchLower) ||
           session.amount.includes(searchTerm) ||
-          session.description?.toLowerCase().includes(searchLower) ||
-          session.reference?.toLowerCase().includes(searchLower)
+          session.id?.toLowerCase().includes(searchLower)
         );
       }
       return true;
@@ -371,14 +370,12 @@ export const QRPaymentHistory: React.FC<QRPaymentHistoryProps> = ({ className })
                         </div>
                       </div>
                     )}
-                    {session.description && (
-                      <div>
-                        <div className="text-muted-foreground">Description</div>
-                        <div className="font-medium truncate">
-                          {session.description}
-                        </div>
+                    <div>
+                      <div className="text-muted-foreground">Session ID</div>
+                      <div className="font-medium truncate">
+                        {session.id}
                       </div>
-                    )}
+                    </div>
                   </div>
                 </div>
               ))}

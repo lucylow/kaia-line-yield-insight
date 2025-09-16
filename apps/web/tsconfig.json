@@ -24,7 +24,24 @@
   "include": [
     "src/main.tsx",
     "src/App-minimal.tsx",
-    "src/index.css"
+    "src/index.css",
+    "src/vite-env.d.ts",
+    "src/pages/Payments.tsx",
+    "src/components/ui/**/*",
+    "src/components/KaiaPaymentModal.tsx",
+    "src/components/PaymentHistory.tsx",
+    "src/components/QRPayment.tsx",
+    "src/components/QRPaymentHistory.tsx",
+    "src/components/ConnectWalletModal.tsx",
+    "src/hooks/useWallet.ts",
+    "src/hooks/useKaiaPayments.ts",
+    "src/hooks/usePayments.ts",
+    "src/hooks/useQRPayment.ts",
+    "src/hooks/use-toast.ts",
+    "src/providers/SimpleWalletProvider.tsx",
+    "src/services/PaymentApiClient.ts",
+    "src/services/qrPaymentService.ts",
+    "src/lib/utils.ts"
   ],
   "exclude": [
     "node_modules",

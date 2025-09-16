@@ -21,7 +21,7 @@ import {
   DollarSign,
   Zap
 } from 'lucide-react';
-import QRCodeReact from 'qrcode.react';
+import { QRCodeSVG } from 'qrcode.react';
 import { useToast } from '@/hooks/use-toast';
 
 interface QRPaymentProps {
@@ -294,7 +294,7 @@ export const QRPayment: React.FC<QRPaymentProps> = ({ className }) => {
             {/* QR Code Display */}
             <div className="flex flex-col items-center space-y-4">
               <div className="p-4 bg-white rounded-lg border-2 border-dashed border-gray-200">
-                <QRCodeReact
+                <QRCodeSVG
                   value={currentSession.qrCodeData}
                   size={256}
                   includeMargin

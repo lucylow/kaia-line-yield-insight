@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { qrPaymentService, QRPaymentSession, CreatePaymentRequest, PaymentStatusResponse } from '../services/qrPaymentService';
+import { useWallet } from './useWallet';
 
 export interface UseQRPaymentReturn {
   // State
@@ -25,6 +26,7 @@ export interface UseQRPaymentReturn {
 }
 
 export const useQRPayment = (): UseQRPaymentReturn => {
+  const wallet = useWallet();
   const [currentSession, setCurrentSession] = useState<QRPaymentSession | null>(null);
   const [paymentStatus, setPaymentStatus] = useState<PaymentStatusResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -75,7 +77,7 @@ export const useQRPayment = (): UseQRPaymentReturn => {
       setIsLoading(true);
       setError(null);
       
-      await qrPaymentService.cancelPayment(currentSession.id, currentSession.userAddress);
+      await qrPaymentService.cancelPayment(currentSession.id, wallet.address || '');
       
       // Update local state
       setCurrentSession(prev => prev ? { ...prev, status: 'cancelled' } : null);
@@ -157,7 +159,7 @@ export const useQRPayment = (): UseQRPaymentReturn => {
           setPaymentStatus(status);
           
           // Update current session with latest status
-          setCurrentSession(prev => prev ? { ...prev, ...status } : null);
+          setCurrentSession(prev => prev ? { ...prev, status: status.status as 'pending' | 'cancelled' | 'paid' | 'expired' } : null);
           
           // Stop polling if payment is completed or expired
           if (status.status === 'paid' || status.status === 'expired' || status.status === 'cancelled') {
