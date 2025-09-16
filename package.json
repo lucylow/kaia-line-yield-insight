@@ -10,6 +10,7 @@
   "scripts": {
     "dev": "pnpm --filter web dev",
     "build": "pnpm --filter web build",
+    "build:lovable": "cd apps/web && npm run build:lovable",
     "lint": "pnpm -r lint",
     "type-check": "pnpm -r type-check",
     "test": "pnpm -r test",
