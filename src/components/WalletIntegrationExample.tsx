@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/Card';
-import WalletConnectButton from './WalletConnectButton.jsx';
+import WalletConnectButton from './WalletConnectButton';
 import { useWallet } from '../providers/SimpleWalletProvider';
 import { Wallet, Copy, ExternalLink } from 'lucide-react';
 import { truncateAddress } from '../utils/formatters';
