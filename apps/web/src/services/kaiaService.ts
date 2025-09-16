@@ -4,7 +4,7 @@ import { ethers } from 'ethers';
 export const KAIA_CONFIG = {
   chainId: 8217,
   chainName: 'Kaia Mainnet',
-  rpcUrl: import.meta.env.VITE_KAIA_RPC_URL || 'https://public-en.node.kaia.io',
+  rpcUrl: 'https://public-en.node.kaia.io',
   blockExplorer: 'https://scope.kaia.one',
   nativeCurrency: {
     name: 'Kaia',
@@ -28,7 +28,7 @@ export const KAIA_CONFIG = {
 // Kaia-native USDT configuration
 export const KAIA_USDT_CONFIG = {
   mainnet: {
-    address: import.meta.env.VITE_KAIA_USDT_CONTRACT_ADDRESS || '0xceE8FAF64bE97bF70b95FE6537A2CFC48a5E7F75',
+    address: '0xceE8FAF64bE97bF70b95FE6537A2CFC48a5E7F75',
     decimals: 6,
     symbol: 'USDT',
     name: 'Tether USD (Kaia)',
@@ -44,11 +44,11 @@ export const KAIA_USDT_CONFIG = {
 // Kaia DeFi protocols configuration
 export const KAIA_DEFI_CONFIG = {
   // Mock DeFi contracts for demonstration (replace with real addresses when deployed)
-  yieldVault: import.meta.env.VITE_KAIA_YIELD_VAULT_ADDRESS || '0x0000000000000000000000000000000000000001',
-  lendingPool: import.meta.env.VITE_KAIA_LENDING_POOL_ADDRESS || '0x0000000000000000000000000000000000000002',
-  tradingPool: import.meta.env.VITE_KAIA_TRADING_POOL_ADDRESS || '0x0000000000000000000000000000000000000003',
-  rewardsContract: import.meta.env.VITE_KAIA_REWARDS_CONTRACT_ADDRESS || '0x0000000000000000000000000000000000000004',
-  liquidityMining: import.meta.env.VITE_KAIA_LIQUIDITY_MINING_ADDRESS || '0x0000000000000000000000000000000000000005',
+  yieldVault: '0x0000000000000000000000000000000000000001',
+  lendingPool: '0x0000000000000000000000000000000000000002',
+  tradingPool: '0x0000000000000000000000000000000000000003',
+  rewardsContract: '0x0000000000000000000000000000000000000004',
+  liquidityMining: '0x0000000000000000000000000000000000000005',
   
   // Kaia ecosystem specific contracts
   kaiaSwap: '0x0000000000000000000000000000000000000006', // Mock KaiaSwap router
@@ -67,7 +67,7 @@ export const TRADE_AND_EARN_CONFIG = {
 
 // Kaia service class
 export class KaiaService {
-  private provider: ethers.Provider | null = null;
+  private provider: ethers.BrowserProvider | null = null;
   private signer: ethers.Signer | null = null;
   private usdtContract: ethers.Contract | null = null;
   private currentNetwork: 'mainnet' | 'testnet' = 'testnet';
@@ -206,7 +206,7 @@ export class KaiaService {
     return ethers.formatUnits(balance, usdtConfig.decimals);
   }
 
-  async transferUSDT(to: string, amount: string): Promise<ethers.TransactionResponse> {
+  async transferUSDT(to: string, amount: string): Promise<any> {
     if (!this.usdtContract || !this.signer) {
       throw new Error('Contract or signer not initialized');
     }
@@ -220,7 +220,7 @@ export class KaiaService {
     return tx;
   }
 
-  async approveUSDT(spender: string, amount: string): Promise<ethers.TransactionResponse> {
+  async approveUSDT(spender: string, amount: string): Promise<any> {
     if (!this.usdtContract || !this.signer) {
       throw new Error('Contract or signer not initialized');
     }
@@ -235,7 +235,7 @@ export class KaiaService {
   }
 
   // Kaia DeFi operations
-  async depositToYieldVault(amount: string): Promise<ethers.TransactionResponse> {
+  async depositToYieldVault(amount: string): Promise<any> {
     if (!this.signer) {
       throw new Error('Signer not initialized');
     }
@@ -254,12 +254,16 @@ export class KaiaService {
       this.signer
     );
 
-    const amountWei = ethers.parseUnits(amount, KAIA_USDT_CONFIG.decimals);
+    const usdtConfig = this.currentNetwork === 'mainnet' 
+      ? KAIA_USDT_CONFIG.mainnet 
+      : KAIA_USDT_CONFIG.testnet;
+
+    const amountWei = ethers.parseUnits(amount, usdtConfig.decimals);
     const tx = await vaultContract.deposit(amountWei);
     return tx;
   }
 
-  async withdrawFromYieldVault(amount: string): Promise<ethers.TransactionResponse> {
+  async withdrawFromYieldVault(amount: string): Promise<any> {
     if (!this.signer) {
       throw new Error('Signer not initialized');
     }
@@ -274,7 +278,11 @@ export class KaiaService {
       this.signer
     );
 
-    const amountWei = ethers.parseUnits(amount, KAIA_USDT_CONFIG.decimals);
+    const usdtConfig = this.currentNetwork === 'mainnet' 
+      ? KAIA_USDT_CONFIG.mainnet 
+      : KAIA_USDT_CONFIG.testnet;
+
+    const amountWei = ethers.parseUnits(amount, usdtConfig.decimals);
     const tx = await vaultContract.withdraw(amountWei);
     return tx;
   }
@@ -296,7 +304,12 @@ export class KaiaService {
 
     const address = await this.signer.getAddress();
     const balance = await vaultContract.balanceOf(address);
-    return ethers.formatUnits(balance, KAIA_USDT_CONFIG.decimals);
+    
+    const usdtConfig = this.currentNetwork === 'mainnet' 
+      ? KAIA_USDT_CONFIG.mainnet 
+      : KAIA_USDT_CONFIG.testnet;
+    
+    return ethers.formatUnits(balance, usdtConfig.decimals);
   }
 
   // Trade-and-Earn operations
@@ -305,7 +318,7 @@ export class KaiaService {
     tokenOut: string,
     amountIn: string,
     minAmountOut: string
-  ): Promise<ethers.TransactionResponse> {
+  ): Promise<any> {
     if (!this.signer) {
       throw new Error('Signer not initialized');
     }
@@ -323,8 +336,12 @@ export class KaiaService {
       this.signer
     );
 
-    const amountInWei = ethers.parseUnits(amountIn, KAIA_USDT_CONFIG.decimals);
-    const minAmountOutWei = ethers.parseUnits(minAmountOut, KAIA_USDT_CONFIG.decimals);
+    const usdtConfig = this.currentNetwork === 'mainnet' 
+      ? KAIA_USDT_CONFIG.mainnet 
+      : KAIA_USDT_CONFIG.testnet;
+
+    const amountInWei = ethers.parseUnits(amountIn, usdtConfig.decimals);
+    const minAmountOutWei = ethers.parseUnits(minAmountOut, usdtConfig.decimals);
     const path = [tokenIn, tokenOut];
     const deadline = Math.floor(Date.now() / 1000) + 1800; // 30 minutes
 
@@ -344,7 +361,7 @@ export class KaiaService {
     tokenB: string,
     amountA: string,
     amountB: string
-  ): Promise<ethers.TransactionResponse> {
+  ): Promise<any> {
     if (!this.signer) {
       throw new Error('Signer not initialized');
     }
@@ -362,8 +379,12 @@ export class KaiaService {
       this.signer
     );
 
-    const amountAWei = ethers.parseUnits(amountA, KAIA_USDT_CONFIG.decimals);
-    const amountBWei = ethers.parseUnits(amountB, KAIA_USDT_CONFIG.decimals);
+    const usdtConfig = this.currentNetwork === 'mainnet' 
+      ? KAIA_USDT_CONFIG.mainnet 
+      : KAIA_USDT_CONFIG.testnet;
+
+    const amountAWei = ethers.parseUnits(amountA, usdtConfig.decimals);
+    const amountBWei = ethers.parseUnits(amountB, usdtConfig.decimals);
     const deadline = Math.floor(Date.now() / 1000) + 1800; // 30 minutes
 
     const tx = await liquidityContract.addLiquidity(
@@ -380,7 +401,7 @@ export class KaiaService {
     return tx;
   }
 
-  async claimRewards(): Promise<ethers.TransactionResponse> {
+  async claimRewards(): Promise<any> {
     if (!this.signer) {
       throw new Error('Signer not initialized');
     }
@@ -416,7 +437,12 @@ export class KaiaService {
 
     const address = await this.signer.getAddress();
     const rewards = await rewardsContract.pendingRewards(address);
-    return ethers.formatUnits(rewards, KAIA_USDT_CONFIG.decimals);
+    
+    const usdtConfig = this.currentNetwork === 'mainnet' 
+      ? KAIA_USDT_CONFIG.mainnet 
+      : KAIA_USDT_CONFIG.testnet;
+    
+    return ethers.formatUnits(rewards, usdtConfig.decimals);
   }
 
   // Utility functions
@@ -481,7 +507,7 @@ export class KaiaService {
         {
           hash: '0x1234567890123456789012345678901234567890',
           from: address,
-          to: KAIA_USDT_CONFIG.address,
+          to: KAIA_USDT_CONFIG.mainnet.address,
           value: '100.0',
           timestamp: Date.now() - 3600000,
           type: 'transfer',
