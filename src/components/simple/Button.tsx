@@ -1,6 +1,8 @@
 import React from 'react';
 import { cn } from '../../lib/utils';
 
+// @lovable:button-component
+
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'default' | 'outline' | 'secondary' | 'ghost' | 'destructive';
   size?: 'sm' | 'md' | 'lg' | 'icon' | 'default';

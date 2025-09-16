@@ -5,7 +5,7 @@ export default {
   
   // Entry points
   entry: {
-    main: "./src/main.jsx",
+    main: "./src/main.tsx",
     app: "./src/App-minimal.tsx"
   },
   
@@ -18,8 +18,8 @@ export default {
     referralSystem: "./src/components/ReferralSystem.tsx",
     transactionHistory: "./src/components/TransactionHistory.tsx",
     walletProvider: "./src/providers/WalletProvider.tsx",
-    button: "./src/components/ui/Button.tsx",
-    card: "./src/components/ui/Card.tsx",
+    button: "./src/components/ui/button.tsx",
+    card: "./src/components/ui/card.tsx",
     errorBoundary: "./src/components/ErrorBoundary.tsx"
   },
   
