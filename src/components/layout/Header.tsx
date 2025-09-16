@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Button } from '../ui/button';
+import { Button } from '../ui/Button';
 import { WalletConnectButton } from '../WalletConnectButton';
 import { NetworkBanner } from '../NetworkBanner';
 import { 
