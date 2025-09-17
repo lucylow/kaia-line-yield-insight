@@ -1175,24 +1175,6 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - [Code Examples](https://github.com/line-yield/examples)
 - [Best Practices](https://docs.line-yield.com/best-practices)
 
-## 🆘 Support
-
-### Community Channels
-- **Discord**: [Join our Discord community](https://discord.gg/line-yield)
-- **Telegram**: [Telegram group](https://t.me/lineyield)
-- **Twitter**: [Follow us on Twitter](https://twitter.com/lineyield)
-- **GitHub**: [GitHub Discussions](https://github.com/line-yield/platform/discussions)
-
-### Support Channels
-- **Technical Support**: support@line-yield.com
-- **Business Inquiries**: business@line-yield.com
-- **Security Issues**: security@line-yield.com
-- **Bug Reports**: [GitHub Issues](https://github.com/line-yield/platform/issues)
-
-### Documentation
-- **API Docs**: [docs.line-yield.com](https://docs.line-yield.com)
-- **Smart Contracts**: [contracts.line-yield.com](https://contracts.line-yield.com)
-- **Integration Guides**: [guides.line-yield.com](https://guides.line-yield.com)
 
 ## ✅ Implementation Status
 
